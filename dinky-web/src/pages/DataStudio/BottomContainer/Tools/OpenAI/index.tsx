@@ -20,12 +20,11 @@
 import CodeEdit from '@/components/CustomEditor/CodeEdit';
 import CodeShow from '@/components/CustomEditor/CodeShow';
 import useThemeValue from '@/hooks/useThemeValue';
-import { jsonToSql } from '@/pages/DataStudio/BottomContainer/Tools/JsonToSql/service';
+import { getSupportLanguages } from '@/pages/DataStudio/BottomContainer/Tools/OpenAI/service';
 import { StateType } from '@/pages/DataStudio/model';
 import { connect } from '@@/exports';
 import { Button, Space } from 'antd';
 import React, { useState } from 'react';
-import {getSupportLanguages} from "@/pages/DataStudio/BottomContainer/Tools/OpenAI/service";
 
 const padding = 10;
 

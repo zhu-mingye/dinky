@@ -21,7 +21,6 @@ package org.dinky.data.model;
 
 import org.dinky.context.EngineContextHolder;
 import org.dinky.data.constant.CommonConstant;
-import org.dinky.data.enums.OpenaiManufacturer;
 import org.dinky.data.enums.Status;
 import org.dinky.data.properties.OssProperties;
 
@@ -138,7 +137,6 @@ public class SystemConfiguration {
             .defaultValue(false)
             .note(Status.SYS_ENV_SETTINGS_OPENAI_ENABLE_NOTE);
 
-
     private final Configuration<String> openAiKey = key(Status.SYS_ENV_SETTINGS_OPENAI_KEY)
             .stringType()
             .defaultValue("")
@@ -149,7 +147,6 @@ public class SystemConfiguration {
             .defaultValue("")
             .note(Status.SYS_ENV_SETTINGS_OPENAI_BASE_URL_NOTE);
 
-
     private final Configuration<String> openaiModelType = key(Status.SYS_ENV_SETTINGS_OPENAI_MODEL_TYPE)
             .stringType()
             .defaultValue("gpt-3.5-turbo")
@@ -159,7 +156,6 @@ public class SystemConfiguration {
             .intType()
             .defaultValue(10000)
             .note(Status.SYS_ENV_SETTINGS_OPENAI_MAX_TOKENS_NOTE);
-
 
     private final Configuration<Boolean> dolphinschedulerEnable = key(Status.SYS_DOLPHINSCHEDULER_SETTINGS_ENABLE)
             .booleanType()

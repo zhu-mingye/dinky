@@ -368,7 +368,6 @@ public enum Status {
     SYS_ENV_SETTINGS_OPENAI_MAX_TOKENS(1183, "sys.env.settings.openAI.maxTokens"),
     SYS_ENV_SETTINGS_OPENAI_MAX_TOKENS_NOTE(1184, "sys.env.settings.openAI.maxTokens.note"),
 
-
     SYS_DOLPHINSCHEDULER_SETTINGS_ENABLE(118, "sys.dolphinscheduler.settings.enable"),
     SYS_DOLPHINSCHEDULER_SETTINGS_ENABLE_NOTE(119, "sys.dolphinscheduler.settings.enable.note"),
     SYS_DOLPHINSCHEDULER_SETTINGS_URL(120, "sys.dolphinscheduler.settings.url"),

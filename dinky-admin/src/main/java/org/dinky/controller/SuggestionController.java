@@ -19,7 +19,6 @@
 
 package org.dinky.controller;
 
-import cn.dev33.satoken.annotation.SaIgnore;
 import org.dinky.data.dto.SuggestionDTO;
 import org.dinky.data.enums.Status;
 import org.dinky.data.result.Result;
@@ -34,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -83,5 +83,4 @@ public class SuggestionController {
 
         return Result.succeed(suggestionService.buildSuggestionsByOpenAi(suggestionDTO), Status.SUCCESS);
     }
-
 }

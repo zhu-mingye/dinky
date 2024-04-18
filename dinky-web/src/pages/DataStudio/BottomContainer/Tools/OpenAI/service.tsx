@@ -17,13 +17,14 @@
  *
  */
 
-import {postAll, postDataArray} from '@/services/api';
-import { API_CONSTANTS } from '@/services/endpoints';
+import { postAll } from '@/services/api';
 
 export async function getSupportLanguages(params: any) {
-  await postAll('api/suggestion/buildSuggestionsByOpenAi', params).then((res) => {
-    return res.data;
-  }).catch((err) => {
-    console.log(err);
-  });
+  await postAll('api/suggestion/buildSuggestionsByOpenAi', params)
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }

@@ -19,12 +19,8 @@
 
 package org.dinky.data.model;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.convert.Convert;
-import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.EnumUtil;
-import cn.hutool.core.util.ObjectUtil;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.dinky.data.enums.Status;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,10 +28,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.EnumUtil;
+import cn.hutool.core.util.ObjectUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.dinky.data.enums.Status;
 
 @Getter
 @Setter

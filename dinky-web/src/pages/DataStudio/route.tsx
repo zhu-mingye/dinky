@@ -23,6 +23,7 @@ import JobExecHistory from '@/pages/DataStudio/BottomContainer/JobExecHistory';
 import Lineage from '@/pages/DataStudio/BottomContainer/Lineage';
 import Result from '@/pages/DataStudio/BottomContainer/Result';
 import JsonToSql from '@/pages/DataStudio/BottomContainer/Tools/JsonToSql';
+import OpenAI from '@/pages/DataStudio/BottomContainer/Tools/OpenAI';
 import TextComparison from '@/pages/DataStudio/BottomContainer/Tools/TextComparison';
 import { LeftBottomKey, LeftMenuKey, RightMenuKey } from '@/pages/DataStudio/data.d';
 import { isSql } from '@/pages/DataStudio/HeaderContainer/function';
@@ -57,7 +58,6 @@ import {
 } from '@ant-design/icons';
 import { TabPaneProps } from 'antd';
 import React, { ReactNode } from 'react';
-import OpenAI from "@/pages/DataStudio/BottomContainer/Tools/OpenAI";
 
 export const LeftSide: TabProp[] = [
   {
