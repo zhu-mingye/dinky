@@ -19,6 +19,7 @@
 
 package org.dinky.service.impl;
 
+import org.dinky.data.dto.SuggestionDTO;
 import org.dinky.data.flink.config.FlinkConfigOption;
 import org.dinky.data.model.Document;
 import org.dinky.data.model.FragmentVariable;
@@ -27,6 +28,7 @@ import org.dinky.data.vo.suggestion.SuggestionVO;
 import org.dinky.service.DocumentService;
 import org.dinky.service.FragmentVariableService;
 import org.dinky.service.SuggestionService;
+import org.dinky.service.openai.OpenAISuggestionService;
 import org.dinky.utils.FlinkConfigOptionsUtils;
 
 import java.util.HashSet;
@@ -46,6 +48,8 @@ import lombok.extern.slf4j.Slf4j;
 public class SuggestionServiceImpl implements SuggestionService {
 
     private final DocumentService documentService;
+
+    private final OpenAISuggestionService openAISuggestionService;
 
     private final FragmentVariableService fragmentVariableService;
 
@@ -180,5 +184,14 @@ public class SuggestionServiceImpl implements SuggestionService {
             boolean enableSchemaSuggestion, String sqlStatement, int position) {
         // todo: 根据传入的sql，获取建议列表, 需要和flink的sql解析器结合起来
         return new HashSet<>();
+    }
+
+    /**
+     * @param suggestionDTO
+     * @return
+     */
+    @Override
+    public String buildSuggestionsByOpenAi(SuggestionDTO suggestionDTO) {
+        return openAISuggestionService.getSuggestions(suggestionDTO);
     }
 }

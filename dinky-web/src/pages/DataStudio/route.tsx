@@ -57,6 +57,7 @@ import {
 } from '@ant-design/icons';
 import { TabPaneProps } from 'antd';
 import React, { ReactNode } from 'react';
+import OpenAI from "@/pages/DataStudio/BottomContainer/Tools/OpenAI";
 
 export const LeftSide: TabProp[] = [
   {
@@ -238,6 +239,12 @@ export const LeftBottomMoreTabs: { [c: string]: TabProp[] } = {
       icon: <RotateRightOutlined />,
       label: l('menu.datastudio.tool.jsonToSql'),
       children: <JsonToSql />
+    },
+    {
+      key: 'menu.datastudio.tool.openai',
+      icon: <RotateRightOutlined />,
+      label: 'OpenAI',
+      children: <OpenAI />
     }
   ]
 };

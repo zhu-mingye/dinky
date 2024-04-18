@@ -357,6 +357,17 @@ public enum Status {
     SYS_ENV_SETTINGS_MAX_RETAIN_COUNT_NOTE(1174, "sys.env.settings.maxRetainCount.note"),
     SYS_ENV_SETTINGS_EXPRESSION_VARIABLE(1175, "sys.env.settings.expressionVariable"),
     SYS_ENV_SETTINGS_EXPRESSION_VARIABLE_NOTE(1176, "sys.env.settings.expressionVariable.note"),
+    SYS_ENV_SETTINGS_OPENAI_ENABLE(1185, "sys.env.settings.openAIEnable"),
+    SYS_ENV_SETTINGS_OPENAI_ENABLE_NOTE(1186, "sys.env.settings.openAIEnable.note"),
+    SYS_ENV_SETTINGS_OPENAI_KEY(1177, "sys.env.settings.openAIKey"),
+    SYS_ENV_SETTINGS_OPENAI_KEY_NOTE(1178, "sys.env.settings.openAIKey.note"),
+    SYS_ENV_SETTINGS_OPENAI_BASE_URL(1179, "sys.env.settings.openAI.baseUrl"),
+    SYS_ENV_SETTINGS_OPENAI_BASE_URL_NOTE(1180, "sys.env.settings.openAI.baseUrl.note"),
+    SYS_ENV_SETTINGS_OPENAI_MODEL_TYPE(1181, "sys.env.settings.openAI.modelType"),
+    SYS_ENV_SETTINGS_OPENAI_MODEL_TYPE_NOTE(1182, "sys.env.settings.openAI.modelType.note"),
+    SYS_ENV_SETTINGS_OPENAI_MAX_TOKENS(1183, "sys.env.settings.openAI.maxTokens"),
+    SYS_ENV_SETTINGS_OPENAI_MAX_TOKENS_NOTE(1184, "sys.env.settings.openAI.maxTokens.note"),
+
 
     SYS_DOLPHINSCHEDULER_SETTINGS_ENABLE(118, "sys.dolphinscheduler.settings.enable"),
     SYS_DOLPHINSCHEDULER_SETTINGS_ENABLE_NOTE(119, "sys.dolphinscheduler.settings.enable.note"),

@@ -19,6 +19,7 @@
 
 package org.dinky.service;
 
+import org.dinky.data.dto.SuggestionDTO;
 import org.dinky.data.vo.suggestion.SuggestionVO;
 
 import java.util.Set;
@@ -47,4 +48,6 @@ public interface SuggestionService {
      * @return  suggestions list
      */
     Set<SuggestionVO> getSuggestionsBySqlStatement(boolean enableSchemaSuggestion, String sqlStatement, int position);
+
+    String buildSuggestionsByOpenAi(SuggestionDTO suggestionDTO);
 }

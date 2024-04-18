@@ -21,6 +21,7 @@ package org.dinky.data.model;
 
 import org.dinky.context.EngineContextHolder;
 import org.dinky.data.constant.CommonConstant;
+import org.dinky.data.enums.OpenaiManufacturer;
 import org.dinky.data.enums.Status;
 import org.dinky.data.properties.OssProperties;
 
@@ -131,6 +132,34 @@ public class SystemConfiguration {
             .stringType()
             .defaultValue(CommonConstant.DEFAULT_EXPRESSION_VARIABLES)
             .note(Status.SYS_ENV_SETTINGS_EXPRESSION_VARIABLE_NOTE);
+
+    private final Configuration<Boolean> enableOpenAI = key(Status.SYS_ENV_SETTINGS_OPENAI_ENABLE)
+            .booleanType()
+            .defaultValue(false)
+            .note(Status.SYS_ENV_SETTINGS_OPENAI_ENABLE_NOTE);
+
+
+    private final Configuration<String> openAiKey = key(Status.SYS_ENV_SETTINGS_OPENAI_KEY)
+            .stringType()
+            .defaultValue("")
+            .note(Status.SYS_ENV_SETTINGS_OPENAI_KEY_NOTE);
+
+    private final Configuration<String> openAIBaseUrl = key(Status.SYS_ENV_SETTINGS_OPENAI_BASE_URL)
+            .stringType()
+            .defaultValue("")
+            .note(Status.SYS_ENV_SETTINGS_OPENAI_BASE_URL_NOTE);
+
+
+    private final Configuration<String> openaiModelType = key(Status.SYS_ENV_SETTINGS_OPENAI_MODEL_TYPE)
+            .stringType()
+            .defaultValue("gpt-3.5-turbo")
+            .note(Status.SYS_ENV_SETTINGS_OPENAI_MODEL_TYPE_NOTE);
+
+    private final Configuration<Integer> openaiMaxTokens = key(Status.SYS_ENV_SETTINGS_OPENAI_MAX_TOKENS)
+            .intType()
+            .defaultValue(10000)
+            .note(Status.SYS_ENV_SETTINGS_OPENAI_MAX_TOKENS_NOTE);
+
 
     private final Configuration<Boolean> dolphinschedulerEnable = key(Status.SYS_DOLPHINSCHEDULER_SETTINGS_ENABLE)
             .booleanType()

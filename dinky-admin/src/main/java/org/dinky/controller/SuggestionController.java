@@ -19,7 +19,9 @@
 
 package org.dinky.controller;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import org.dinky.data.dto.SuggestionDTO;
+import org.dinky.data.enums.Status;
 import org.dinky.data.result.Result;
 import org.dinky.data.vo.suggestion.SuggestionVO;
 import org.dinky.service.SuggestionService;
@@ -72,4 +74,14 @@ public class SuggestionController {
                 suggestionDTO.getSqlStatement(),
                 suggestionDTO.getPosition()));
     }
+
+    @PostMapping("/buildSuggestionsByOpenAi")
+    @ApiOperation(value = "BuildSuggestionsByOpenAi", notes = "BuildSuggestionsByOpenAi")
+    @SaIgnore
+    @ApiImplicitParam(name = "suggestionDTO", value = "suggestionDTO", required = true, dataType = "SuggestionDTO")
+    public Result<String> buildSuggestionsByOpenAi(@RequestBody SuggestionDTO suggestionDTO) {
+
+        return Result.succeed(suggestionService.buildSuggestionsByOpenAi(suggestionDTO), Status.SUCCESS);
+    }
+
 }
