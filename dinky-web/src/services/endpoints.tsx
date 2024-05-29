@@ -198,10 +198,6 @@ export enum API_CONSTANTS {
   PLUGIN_MARKET_UNINSTALL = '/api/plugin-marketing/uninstall',
   PLUGIN_MARKET_DELETE = '/api/plugin-marketing/delete',
 
-
-
-
-
   /** ------------------------------------------------ Devops center  ------------------------------------ */
   // ------------------------------------ devops job  ------------------------------------
   JOB_INSTANCE = '/api/jobInstance',

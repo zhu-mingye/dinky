@@ -18,14 +18,19 @@
  */
 
 import {
-  queryDsConfig, queryEnablePluginMarket,
+  queryDsConfig,
+  queryEnablePluginMarket,
   queryResourceConfig,
   queryTaskOwnerLockingStrategy
 } from '@/pages/SettingCenter/GlobalSetting/service';
-import {BaseConfigProperties, GLOBAL_SETTING_KEYS, TaskOwnerLockingStrategy} from '@/types/SettingCenter/data.d';
-import {createModelTypes} from '@/utils/modelUtils';
-import {Effect} from '@@/plugin-dva/types';
-import {Reducer} from 'umi';
+import {
+  BaseConfigProperties,
+  GLOBAL_SETTING_KEYS,
+  TaskOwnerLockingStrategy
+} from '@/types/SettingCenter/data.d';
+import { createModelTypes } from '@/utils/modelUtils';
+import { Effect } from '@@/plugin-dva/types';
+import { Reducer } from 'umi';
 
 const SYS_CONFIG = 'SysConfig';
 
@@ -66,7 +71,7 @@ const ConfigModel: ConfigModelType = {
   },
 
   effects: {
-    * queryTaskOwnerLockingStrategy({payload}, {call, put}) {
+    *queryTaskOwnerLockingStrategy({ payload }, { call, put }) {
       const response: BaseConfigProperties[] = yield call(queryTaskOwnerLockingStrategy, payload);
       if (response && response.length > 0) {
         const taskOwnerLockingStrategy = response.find(
@@ -81,7 +86,7 @@ const ConfigModel: ConfigModelType = {
         });
       }
     },
-    * queryDsConfig({payload}, {call, put}) {
+    *queryDsConfig({ payload }, { call, put }) {
       const response: BaseConfigProperties[] = yield call(queryDsConfig, payload);
       yield put({
         type: 'saveDsConfig',
@@ -98,7 +103,7 @@ const ConfigModel: ConfigModelType = {
         });
       }
     },
-    * queryResourceConfig({payload}, {call, put}) {
+    *queryResourceConfig({ payload }, { call, put }) {
       const response: BaseConfigProperties[] = yield call(queryResourceConfig, payload);
       yield put({
         type: 'saveDsConfig',
@@ -115,7 +120,7 @@ const ConfigModel: ConfigModelType = {
         });
       }
     },
-    * queryEnablePluginMarket({payload}, {call, put}) {
+    *queryEnablePluginMarket({ payload }, { call, put }) {
       const response: BaseConfigProperties[] = yield call(queryEnablePluginMarket, payload);
       yield put({
         type: 'saveDsConfig',
@@ -123,47 +128,49 @@ const ConfigModel: ConfigModelType = {
       });
       if (response && response.length > 0) {
         const enablePluginMarket = response.some(
-          (item: BaseConfigProperties) => item.key === GLOBAL_SETTING_KEYS.SYS_MAVEN_SETTINGS_PLUGIN_ENABLE_PLUGIN_MARKET && item.value === true
+          (item: BaseConfigProperties) =>
+            item.key === GLOBAL_SETTING_KEYS.SYS_MAVEN_SETTINGS_PLUGIN_ENABLE_PLUGIN_MARKET &&
+            item.value === true
         );
         yield put({
           type: 'updateEnablePluginMarket',
           payload: enablePluginMarket
         });
       }
-    },
+    }
   },
   reducers: {
-    saveDsConfig(state, {payload}) {
+    saveDsConfig(state, { payload }) {
       return {
         ...state,
         dsConfig: payload
       };
     },
-    updateEnabledDs(state, {payload}) {
+    updateEnabledDs(state, { payload }) {
       return {
         ...state,
         enabledDs: payload
       };
     },
-    updateTaskOwnerLockingStrategy(state, {payload}) {
+    updateTaskOwnerLockingStrategy(state, { payload }) {
       return {
         ...state,
         taskOwnerLockingStrategy: payload
       };
     },
-    updateEnableResource(state, {payload}) {
+    updateEnableResource(state, { payload }) {
       return {
         ...state,
         enableResource: payload
       };
     },
-    updateEnablePluginMarket(state, {payload}) {
+    updateEnablePluginMarket(state, { payload }) {
       return {
         ...state,
         enablePluginMarket: payload
       };
     }
-  },
+  }
 };
 
 export const [CONFIG_MODEL, CONFIG_MODEL_ASYNC] = createModelTypes(ConfigModel);

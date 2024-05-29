@@ -17,13 +17,15 @@
  *
  */
 
-import {BaseBeanColumns} from "@/types/Public/data";
+import { BaseBeanColumns } from '@/types/Public/data';
 import {
   AlertInstanceParamsDingTalk,
   AlertInstanceParamsEmail,
-  AlertInstanceParamsFeiShu, AlertInstanceParamsHttp, AlertInstanceParamsSms,
+  AlertInstanceParamsFeiShu,
+  AlertInstanceParamsHttp,
+  AlertInstanceParamsSms,
   AlertInstanceParamsWeChat
-} from "@/types/RegCenter/data";
+} from '@/types/RegCenter/data';
 
 export type ProcessSteps = {
   stepStatus: string;
@@ -178,5 +180,5 @@ export type PluginMarketInfo = BaseBeanColumns & {
   currentVersion: string;
   versionCount: number;
   installed: boolean;
-   downloaded: boolean;
+  downloaded: boolean;
 };

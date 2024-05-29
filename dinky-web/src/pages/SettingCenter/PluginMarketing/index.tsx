@@ -19,13 +19,13 @@
 
 import SlowlyAppear from '@/components/Animation/SlowlyAppear';
 import { PageContainer } from '@ant-design/pro-components';
-import PluginMarketingList from "@/pages/SettingCenter/PluginMarketing/components/PluginMarketingList";
+import PluginMarketingList from '@/pages/SettingCenter/PluginMarketing/components/PluginMarketingList';
 
 export default () => {
   return (
     <SlowlyAppear>
       <PageContainer title={false}>
-        <PluginMarketingList/>
+        <PluginMarketingList />
       </PageContainer>
     </SlowlyAppear>
   );

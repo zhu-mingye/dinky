@@ -80,17 +80,17 @@ public class SystemConfiguration {
             .defaultValue(false)
             .note(Status.SYS_MAVEN_SETTINGS_ENABLE_PLUGIN_MARKET_NOTE);
 
+    private final Configuration<String> pluginMarketSearchKeyWord =
+            key(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD)
+                    .stringType()
+                    .defaultValue("org.apache.flink")
+                    .note(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_NOTE);
 
-    private final Configuration<String> pluginMarketSearchKeyWord = key(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD)
-            .stringType()
-            .defaultValue("org.apache.flink")
-            .note(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_NOTE);
-
-    private final Configuration<Integer> pluginMarketSearchKeyWordOfNumbers = key(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS)
-            .intType()
-            .defaultValue(1000)
-            .note(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS_NOTE);
-
+    private final Configuration<Integer> pluginMarketSearchKeyWordOfNumbers =
+            key(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS)
+                    .intType()
+                    .defaultValue(1000)
+                    .note(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS_NOTE);
 
     private final Configuration<String> mavenSettings = key(Status.SYS_MAVEN_SETTINGS_SETTINGSFILEPATH)
             .stringType()

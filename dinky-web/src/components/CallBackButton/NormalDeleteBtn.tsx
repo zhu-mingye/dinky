@@ -28,7 +28,7 @@ type NormalDeleteButtonProps = {
 };
 
 export const NormalDeleteBtn: React.FC<NormalDeleteButtonProps> = (props) => {
-  const { onClick ,disabled = false} = props;
+  const { onClick, disabled = false } = props;
 
   return (
     <Button

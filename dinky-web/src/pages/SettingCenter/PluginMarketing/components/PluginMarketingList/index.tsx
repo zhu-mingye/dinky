@@ -17,38 +17,46 @@
  *
  */
 
-import {Authorized} from '@/hooks/useAccess';
-import {queryList} from '@/services/api';
-import {handleGetOption, handleOption, handlePutDataByParams, handleRemoveById} from '@/services/BusinessCrud';
-import {PROTABLE_OPTIONS_PUBLIC} from '@/services/constants';
-import {API_CONSTANTS} from '@/services/endpoints';
-import {PermissionConstants} from '@/types/Public/constants';
-import {l} from '@/utils/intl';
-import ProTable, {ActionType, ProColumns} from '@ant-design/pro-table';
-import React, {useEffect, useRef, useState} from 'react';
-import {PluginMarketInfo} from "@/types/SettingCenter/data.d";
-import {PluginMarketState} from "@/types/SettingCenter/state.d";
-import {InitPluginMarketState} from "@/types/SettingCenter/init.d";
-import {Button, Modal, Result, Tag} from "antd";
-import {CloudDownloadOutlined, DeploymentUnitOutlined, DisconnectOutlined, WarningOutlined} from "@ant-design/icons";
-import {NormalDeleteBtn} from "@/components/CallBackButton/NormalDeleteBtn";
-import {CONFIG_MODEL_ASYNC, SysConfigStateType} from "@/pages/SettingCenter/GlobalSetting/model";
-import {SettingConfigKeyEnum} from "@/pages/SettingCenter/GlobalSetting/SettingOverView/constants";
-import {connect, history} from "@@/exports";
-import {ProCard} from "@ant-design/pro-components";
+import { Authorized } from '@/hooks/useAccess';
+import { queryList } from '@/services/api';
+import {
+  handleGetOption,
+  handleOption,
+  handlePutDataByParams,
+  handleRemoveById
+} from '@/services/BusinessCrud';
+import { PROTABLE_OPTIONS_PUBLIC } from '@/services/constants';
+import { API_CONSTANTS } from '@/services/endpoints';
+import { PermissionConstants } from '@/types/Public/constants';
+import { l } from '@/utils/intl';
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table';
+import React, { useEffect, useRef, useState } from 'react';
+import { PluginMarketInfo } from '@/types/SettingCenter/data.d';
+import { PluginMarketState } from '@/types/SettingCenter/state.d';
+import { InitPluginMarketState } from '@/types/SettingCenter/init.d';
+import { Button, Modal, Result, Tag } from 'antd';
+import {
+  CloudDownloadOutlined,
+  DeploymentUnitOutlined,
+  DisconnectOutlined,
+  WarningOutlined
+} from '@ant-design/icons';
+import { NormalDeleteBtn } from '@/components/CallBackButton/NormalDeleteBtn';
+import { CONFIG_MODEL_ASYNC, SysConfigStateType } from '@/pages/SettingCenter/GlobalSetting/model';
+import { SettingConfigKeyEnum } from '@/pages/SettingCenter/GlobalSetting/SettingOverView/constants';
+import { connect, history } from '@@/exports';
+import { ProCard } from '@ant-design/pro-components';
 
 const PluginMarketingList: React.FC<connect> = (props) => {
-
-  const {dispatch, enablePluginMarket} = props;
-
+  const { dispatch, enablePluginMarket } = props;
 
   const actionRef = useRef<ActionType>(); // table action
   const [pluginState, setPluginState] = useState<PluginMarketState>(InitPluginMarketState);
 
   const executeAndCallbackRefresh = async (callback: () => void) => {
-    setPluginState((prevState) => ({...prevState, loading: true}));
+    setPluginState((prevState) => ({ ...prevState, loading: true }));
     await callback();
-    setPluginState((prevState) => ({...prevState, loading: false}));
+    setPluginState((prevState) => ({ ...prevState, loading: false }));
     actionRef.current?.reload?.();
   };
 
@@ -70,10 +78,11 @@ const PluginMarketingList: React.FC<connect> = (props) => {
       okText: l('button.confirm'),
       cancelText: l('button.cancel'),
       onOk: async () =>
-        executeAndCallbackRefresh(async () => handleRemoveById(API_CONSTANTS.PLUGIN_MARKET_DELETE, id))
+        executeAndCallbackRefresh(async () =>
+          handleRemoveById(API_CONSTANTS.PLUGIN_MARKET_DELETE, id)
+        )
     });
   };
-
 
   /**
    * handle delete
@@ -86,7 +95,9 @@ const PluginMarketingList: React.FC<connect> = (props) => {
       okText: l('button.confirm'),
       cancelText: l('button.cancel'),
       onOk: async () =>
-        executeAndCallbackRefresh(async () => handleRemoveById(API_CONSTANTS.PLUGIN_MARKET_UNINSTALL, id))
+        executeAndCallbackRefresh(async () =>
+          handleRemoveById(API_CONSTANTS.PLUGIN_MARKET_UNINSTALL, id)
+        )
     });
   };
 
@@ -114,7 +125,6 @@ const PluginMarketingList: React.FC<connect> = (props) => {
     );
   };
 
-
   /**
    * table columns
    */
@@ -136,14 +146,14 @@ const PluginMarketingList: React.FC<connect> = (props) => {
       width: '9%',
       dataIndex: 'pluginDownloadUrl',
       copyable: true,
-      ellipsis: true,
+      ellipsis: true
     },
     {
       title: l('sys.plugin.market.localStorageFullPath'),
       width: '9%',
       dataIndex: 'pluginLocalStorageFullPath',
       copyable: true,
-      ellipsis: true,
+      ellipsis: true
     },
     {
       title: l('sys.plugin.market.organization'),
@@ -159,7 +169,7 @@ const PluginMarketingList: React.FC<connect> = (props) => {
       title: l('sys.plugin.market.pluginReleaseTimestamp'),
       width: '9%',
       dataIndex: 'pluginReleaseTimestamp',
-      valueType: 'dateTime',
+      valueType: 'dateTime'
     },
     {
       title: l('sys.plugin.market.description'),
@@ -171,34 +181,28 @@ const PluginMarketingList: React.FC<connect> = (props) => {
       width: '12%',
       render: (_, item) => {
         return (
-          <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-            <Tag>
-              {item.groupId}
-            </Tag>
-            <Tag>
-              {item.artifactId}
-            </Tag>
-            <Tag>
-              {item.currentVersion}
-            </Tag>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Tag>{item.groupId}</Tag>
+            <Tag>{item.artifactId}</Tag>
+            <Tag>{item.currentVersion}</Tag>
           </div>
         );
-      },
+      }
     },
     {
       dataIndex: 'groupId',
       hideInTable: true,
-      hideInSearch: true,
+      hideInSearch: true
     },
     {
       dataIndex: 'artifactId',
       hideInTable: true,
-      hideInSearch: true,
+      hideInSearch: true
     },
     {
       dataIndex: 'currentVersion',
       hideInTable: true,
-      hideInSearch: true,
+      hideInSearch: true
     },
     {
       title: l('sys.plugin.market.install.download.info'),
@@ -207,21 +211,27 @@ const PluginMarketingList: React.FC<connect> = (props) => {
       render: (_, item) => {
         return (
           <div>
-            {item.downloaded ? <Tag color={'green'}>{l('sys.plugin.market.downloaded')}</Tag> :
-              <Tag color={'red'}>{l('sys.plugin.market.notDownloaded')}</Tag>}
-            {item.installed ? <Tag color={'green'}>{l('sys.plugin.market.installed')}</Tag> :
-              <Tag color={'red'}>{l('sys.plugin.market.uninstalled')}</Tag>}
+            {item.downloaded ? (
+              <Tag color={'green'}>{l('sys.plugin.market.downloaded')}</Tag>
+            ) : (
+              <Tag color={'red'}>{l('sys.plugin.market.notDownloaded')}</Tag>
+            )}
+            {item.installed ? (
+              <Tag color={'green'}>{l('sys.plugin.market.installed')}</Tag>
+            ) : (
+              <Tag color={'red'}>{l('sys.plugin.market.uninstalled')}</Tag>
+            )}
           </div>
         );
-      },
+      }
     },
     {
       title: l('sys.plugin.market.install.info'),
       dataIndex: 'installed',
       hideInTable: true,
       valueEnum: {
-        true: {text: l('sys.plugin.market.installed')},
-        false: {text: l('sys.plugin.market.uninstalled')}
+        true: { text: l('sys.plugin.market.installed') },
+        false: { text: l('sys.plugin.market.uninstalled') }
       }
     },
     {
@@ -229,8 +239,8 @@ const PluginMarketingList: React.FC<connect> = (props) => {
       dataIndex: 'downloaded',
       hideInTable: true,
       valueEnum: {
-        true: {text: l('sys.plugin.market.downloaded')},
-        false: {text: l('sys.plugin.market.notDownloaded')}
+        true: { text: l('sys.plugin.market.downloaded') },
+        false: { text: l('sys.plugin.market.notDownloaded') }
       }
     },
     {
@@ -248,21 +258,27 @@ const PluginMarketingList: React.FC<connect> = (props) => {
       width: '8%',
       fixed: 'right',
       render: (_, item: PluginMarketInfo) => [
-        <Authorized key={`${item.id}_auth_download`} path={PermissionConstants.SYSTEM_SETTING_PLUGIN_MARKET_DOWNLOAD}>
+        <Authorized
+          key={`${item.id}_auth_download`}
+          path={PermissionConstants.SYSTEM_SETTING_PLUGIN_MARKET_DOWNLOAD}
+        >
           <Button
             className={'options-button'}
             key={`${item.id}_download`}
             onClick={() => handleDownload(item)}
             title={l('button.download')}
-            icon={<CloudDownloadOutlined/>}
+            icon={<CloudDownloadOutlined />}
           />
         </Authorized>,
         <Authorized
           key={`${item.id}_auth_delete`}
           path={PermissionConstants.SYSTEM_SETTING_PLUGIN_MARKET_DELETE}
         >
-          <NormalDeleteBtn disabled={item.installed || !item.downloaded} key={`${item.id}_delete`}
-                           onClick={() => handleDelete(item.id)}/>
+          <NormalDeleteBtn
+            disabled={item.installed || !item.downloaded}
+            key={`${item.id}_delete`}
+            onClick={() => handleDelete(item.id)}
+          />
         </Authorized>,
         <Authorized
           key={`${item.id}_auth_install`}
@@ -274,7 +290,7 @@ const PluginMarketingList: React.FC<connect> = (props) => {
             disabled={item.installed || !item.downloaded}
             onClick={() => handleInstall(item)}
             title={l('button.install')}
-            icon={<DeploymentUnitOutlined/>}
+            icon={<DeploymentUnitOutlined />}
           />
         </Authorized>,
         <Authorized
@@ -287,10 +303,9 @@ const PluginMarketingList: React.FC<connect> = (props) => {
             disabled={!item.installed}
             onClick={() => handleUnInstall(item.id)}
             title={l('button.uninstall')}
-            icon={<DisconnectOutlined/>}
+            icon={<DisconnectOutlined />}
           />
-        </Authorized>,
-
+        </Authorized>
       ]
     }
   ];
@@ -301,11 +316,11 @@ const PluginMarketingList: React.FC<connect> = (props) => {
   return (
     <>
       {!enablePluginMarket ? (
-        <ProCard ghost size={'small'} bodyStyle={{height: parent.innerHeight - 80}}>
+        <ProCard ghost size={'small'} bodyStyle={{ height: parent.innerHeight - 80 }}>
           <Result
             status='warning'
-            style={{alignItems: 'center', justifyContent: 'center'}}
-            icon={<WarningOutlined/>}
+            style={{ alignItems: 'center', justifyContent: 'center' }}
+            icon={<WarningOutlined />}
             title={l('rc.resource.enable')}
             subTitle={l('sys.plugin.market.enable.tips')}
             extra={
@@ -329,11 +344,7 @@ const PluginMarketingList: React.FC<connect> = (props) => {
           loading={pluginState.loading}
           toolBarRender={() => [
             <Authorized key='sync' path={PermissionConstants.SYSTEM_SETTING_PLUGIN_MARKET_SYNC}>
-              <Button
-                type="primary"
-                key={'syncbtn'}
-                onClick={() => handleSync()}
-              >
+              <Button type='primary' key={'syncbtn'} onClick={() => handleSync()}>
                 {l('button.sync')}
               </Button>
             </Authorized>
@@ -352,6 +363,6 @@ const PluginMarketingList: React.FC<connect> = (props) => {
   );
 };
 
-export default connect(({SysConfig}: { SysConfig: SysConfigStateType }) => ({
+export default connect(({ SysConfig }: { SysConfig: SysConfigStateType }) => ({
   enablePluginMarket: SysConfig.enablePluginMarket
 }))(PluginMarketingList);

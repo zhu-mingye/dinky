@@ -19,7 +19,6 @@
 
 package org.dinky.service;
 
-import java.util.List;
 import org.dinky.data.model.PluginMarketing;
 import org.dinky.mybatis.service.ISuperService;
 
@@ -59,7 +58,6 @@ public interface PluginMarketingService extends ISuperService<PluginMarketing> {
      */
     boolean installPlugin(Integer id);
 
-
     /**
      * 下载并加载依赖
      * @param groupId
@@ -67,14 +65,12 @@ public interface PluginMarketingService extends ISuperService<PluginMarketing> {
      * @param version
      * @param localRepoPath
      */
-//    boolean downloadAndLoadDependency(PluginMarketing pluginMarketing);
+    //    boolean downloadAndLoadDependency(PluginMarketing pluginMarketing);
 
     /**
      * 加载jar到本地classpath
      * @param id 插件id
      */
-//    void loadJarToLocalClasspath(Integer id);
-
-
+    //    void loadJarToLocalClasspath(Integer id);
 
 }

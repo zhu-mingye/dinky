@@ -1,19 +1,31 @@
+/*
+ *
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package org.dinky.controller;
 
-
-import cn.dev33.satoken.annotation.SaCheckLogin;
-import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import org.dinky.data.constant.PermissionConstants;
 import org.dinky.data.enums.Status;
 import org.dinky.data.model.PluginMarketing;
 import org.dinky.data.result.ProTableResult;
 import org.dinky.data.result.Result;
 import org.dinky.service.PluginMarketingService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +35,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 
 @RestController
 @Api(tags = "Plugin Marketing Controller")
@@ -50,14 +71,13 @@ public class PluginMarketingController {
     public ProTableResult<PluginMarketing> listToken(@RequestBody JsonNode params) {
         return pluginMarketService.selectForProTable(params);
     }
-//    public Result<List<PluginMarketing>> listPlugins(
-//            @RequestParam(defaultValue = "") String keyword,
-//            @RequestParam(defaultValue = "false") boolean installed,
-//             @RequestParam(defaultValue = "false") boolean isDownloaded
-//    ) {
-//        return Result.succeed(pluginMarketService.listPlugins(keyword,installed,isDownloaded));
-//    }
-
+    //    public Result<List<PluginMarketing>> listPlugins(
+    //            @RequestParam(defaultValue = "") String keyword,
+    //            @RequestParam(defaultValue = "false") boolean installed,
+    //             @RequestParam(defaultValue = "false") boolean isDownloaded
+    //    ) {
+    //        return Result.succeed(pluginMarketService.listPlugins(keyword,installed,isDownloaded));
+    //    }
 
     @PutMapping("/download")
     @ApiOperation("Download Plugin")
@@ -106,6 +126,4 @@ public class PluginMarketingController {
         }
         return Result.succeed(Status.DELETE_SUCCESS);
     }
-
-
 }

@@ -18,16 +18,15 @@
  */
 
 import { BaseState } from '@/types/Public/state';
-import {AlertRule, PluginMarketInfo} from '@/types/SettingCenter/data.d';
+import { AlertRule, PluginMarketInfo } from '@/types/SettingCenter/data.d';
 
 export interface AlertRuleListState extends BaseState {
   value: Partial<AlertRule>;
 }
 
-
 export interface PluginMarketState extends BaseState {
   value: Partial<AlertRule>;
-  pluginList: PluginMarketInfo[],
+  pluginList: PluginMarketInfo[];
   installed: boolean;
   downloaded: boolean;
 }

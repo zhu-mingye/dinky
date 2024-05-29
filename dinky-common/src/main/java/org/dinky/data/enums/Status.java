@@ -352,11 +352,12 @@ public enum Status {
     SYS_MAVEN_SETTINGS_ENABLE_PLUGIN_MARKET(120, "sys.maven.settings.plugin.enablePluginMarket"),
     SYS_MAVEN_SETTINGS_ENABLE_PLUGIN_MARKET_NOTE(121, "sys.maven.settings.plugin.enablePluginMarket.note"),
     SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD(122, "sys.maven.settings.plugin.pluginMarketSearchKeyWord"),
-    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_NOTE(123, "sys.maven.settings.plugin.pluginMarketSearchKeyWord.note"),
-    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS(124, "sys.maven.settings.plugin.pluginMarketSearchKeyWordOfNumbers"),
-    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS_NOTE(125, "sys.maven.settings.plugin.pluginMarketSearchKeyWordOfNumbers.note"),
-
-
+    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_NOTE(
+            123, "sys.maven.settings.plugin.pluginMarketSearchKeyWord.note"),
+    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS(
+            124, "sys.maven.settings.plugin.pluginMarketSearchKeyWordOfNumbers"),
+    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS_NOTE(
+            125, "sys.maven.settings.plugin.pluginMarketSearchKeyWordOfNumbers.note"),
 
     SYS_ENV_SETTINGS_PYTHONHOME(114, "sys.env.settings.pythonHome"),
     SYS_ENV_SETTINGS_PYTHONHOME_NOTE(115, "sys.env.settings.pythonHome.note"),

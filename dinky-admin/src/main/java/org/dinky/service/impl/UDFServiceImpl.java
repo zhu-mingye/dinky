@@ -19,7 +19,6 @@
 
 package org.dinky.service.impl;
 
-import java.util.ArrayList;
 import org.dinky.config.Dialect;
 import org.dinky.data.model.Resources;
 import org.dinky.data.model.udf.UDFManage;
@@ -35,6 +34,7 @@ import org.dinky.utils.UDFUtils;
 import org.apache.flink.table.catalog.FunctionLanguage;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -188,17 +188,20 @@ public class UDFServiceImpl extends ServiceImpl<UDFManageMapper, UDFManage> impl
                 .map(UDFUtils::resourceUdfManageToUDF)
                 .collect(Collectors.toList());
 
-        CascaderVO staticUdfCascaderVO = new CascaderVO("Flink Static UDF",
+        CascaderVO staticUdfCascaderVO = new CascaderVO(
+                "Flink Static UDF",
                 "Flink Static UDF",
                 staticUdfs.stream()
                         .map(udf -> new CascaderVO(udf.getClassName(), udf.getClassName()))
                         .collect(Collectors.toList()));
-        CascaderVO userDefinedUdfCascaderVO = new CascaderVO("User Defined Release UDF",
+        CascaderVO userDefinedUdfCascaderVO = new CascaderVO(
+                "User Defined Release UDF",
                 "User Defined Release UDF",
                 userDefinedReleaseUdfs.stream()
                         .map(udf -> new CascaderVO(udf.getClassName(), udf.getClassName()))
                         .collect(Collectors.toList()));
-        CascaderVO udfManageDynamicCascaderVO = new CascaderVO("From UDF Manage",
+        CascaderVO udfManageDynamicCascaderVO = new CascaderVO(
+                "From UDF Manage",
                 "From UDF Manage",
                 udfManageDynamic.stream()
                         .map(udf -> new CascaderVO(udf.getClassName(), udf.getClassName()))

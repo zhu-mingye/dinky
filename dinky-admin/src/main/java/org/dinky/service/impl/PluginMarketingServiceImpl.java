@@ -1,4 +1,39 @@
+/*
+ *
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+
 package org.dinky.service.impl;
+
+import org.dinky.data.exception.BusException;
+import org.dinky.data.model.PluginMarketing;
+import org.dinky.data.model.SystemConfiguration;
+import org.dinky.mapper.PluginMarketingMapper;
+import org.dinky.mybatis.service.impl.SuperServiceImpl;
+import org.dinky.service.PluginMarketingService;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
@@ -6,29 +41,17 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dinky.data.exception.BusException;
-import org.dinky.data.model.PluginMarketing;
-import org.dinky.data.model.SystemConfiguration;
-import org.dinky.mapper.PluginMarketingMapper;
-import org.dinky.mybatis.service.impl.SuperServiceImpl;
-import org.dinky.service.PluginMarketingService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketingMapper, PluginMarketing> implements PluginMarketingService {
+public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketingMapper, PluginMarketing>
+        implements PluginMarketingService {
 
-    private final String LOCAL_REPO_PATH = System.getProperty("user.dir") + FileUtil.FILE_SEPARATOR + "customJar" + FileUtil.FILE_SEPARATOR;
-
+    private final String LOCAL_REPO_PATH =
+            System.getProperty("user.dir") + FileUtil.FILE_SEPARATOR + "customJar" + FileUtil.FILE_SEPARATOR;
 
     private final SystemConfiguration systemConfiguration = SystemConfiguration.getInstances();
 
@@ -38,12 +61,16 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean syncPluginMarketData() {
-        //todo 调用插件市场接口，获取插件列表
+        // todo 调用插件市场接口，获取插件列表
         String pluginMarketUrl = systemConfiguration.getMavenRepository();
         // todo: 如何获取插件列表
-        HttpRequest httpRequest = HttpUtil.createGet(pluginMarketUrl + "?q=g:" + systemConfiguration.getPluginMarketSearchKeyWord().getValue() + "&start=0&rows=" + systemConfiguration.getPluginMarketSearchKeyWordOfNumbers().getValue());
-        if (StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryUser()) && StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryPassword())) {
-            httpRequest.basicAuth(systemConfiguration.getMavenRepositoryUser(), systemConfiguration.getMavenRepositoryPassword());
+        HttpRequest httpRequest = HttpUtil.createGet(pluginMarketUrl + "?q=g:"
+                + systemConfiguration.getPluginMarketSearchKeyWord().getValue() + "&start=0&rows="
+                + systemConfiguration.getPluginMarketSearchKeyWordOfNumbers().getValue());
+        if (StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryUser())
+                && StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryPassword())) {
+            httpRequest.basicAuth(
+                    systemConfiguration.getMavenRepositoryUser(), systemConfiguration.getMavenRepositoryPassword());
         }
         HttpResponse httpResponse = httpRequest.execute();
         // 创建插件列表集合
@@ -59,30 +86,36 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         AtomicLong continueCount = new AtomicLong(0);
         AtomicBoolean result = new AtomicBoolean(false);
 
-
         List<PluginMarketing> needInsertPluginMarketingList = new ArrayList<>();
 
         // 3.通过唯一索引对比(`name`,`plugin_id`,`repository_id`,`group_id`,`artifact_id`,`current_version`)，如果存在则更新，如果不存在则新增
         for (PluginMarketing pluginMarketing : pluginMarketingListOfRemoteRepo) {
-            //  3.1.通过唯一索引对比(`name`,`plugin_id`,`repository_id`,`group_id`,`artifact_id`,`current_version`)，如果存在不操作，如果不存在则新增
-            PluginMarketing searchPluginResult = pluginMarketingListInDataBase.stream().filter(plugin -> {
-                        boolean matchResult = plugin.getName().equals(pluginMarketing.getName()) &&
-                                plugin.getPluginId().equals(pluginMarketing.getPluginId()) &&
-                                plugin.getRepositoryId().equals(pluginMarketing.getRepositoryId()) &&
-                                plugin.getGroupId().equals(pluginMarketing.getGroupId()) &&
-                                plugin.getArtifactId().equals(pluginMarketing.getArtifactId()) &&
-                                plugin.getCurrentVersion().equals(pluginMarketing.getCurrentVersion());
+            //
+            // 3.1.通过唯一索引对比(`name`,`plugin_id`,`repository_id`,`group_id`,`artifact_id`,`current_version`)，如果存在不操作，如果不存在则新增
+            PluginMarketing searchPluginResult = pluginMarketingListInDataBase.stream()
+                    .filter(plugin -> {
+                        boolean matchResult = plugin.getName().equals(pluginMarketing.getName())
+                                && plugin.getPluginId().equals(pluginMarketing.getPluginId())
+                                && plugin.getRepositoryId().equals(pluginMarketing.getRepositoryId())
+                                && plugin.getGroupId().equals(pluginMarketing.getGroupId())
+                                && plugin.getArtifactId().equals(pluginMarketing.getArtifactId())
+                                && plugin.getCurrentVersion().equals(pluginMarketing.getCurrentVersion());
 
                         if (matchResult) {
-                            log.debug("The plugin {} has not been synchronized and the data does not exist. Please add a new one", plugin.getName());
+                            log.debug(
+                                    "The plugin {} has not been synchronized and the data does not exist. Please add a new one",
+                                    plugin.getName());
                             newInsertCount.getAndIncrement();
                         } else {
-                            log.debug("The plugin {} has been synchronized and the data already exists. Skipping", plugin.getName());
+                            log.debug(
+                                    "The plugin {} has been synchronized and the data already exists. Skipping",
+                                    plugin.getName());
                             continueCount.getAndIncrement();
                         }
                         return matchResult;
-                    }
-            ).findFirst().orElse(null);
+                    })
+                    .findFirst()
+                    .orElse(null);
 
             if (searchPluginResult == null) {
                 needInsertPluginMarketingList.add(pluginMarketing);
@@ -90,13 +123,15 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         }
         boolean saveBatch = this.saveBatch(needInsertPluginMarketingList);
         if (saveBatch) {
-            log.info("The plugin has been synchronized successfully, the number of new plugins is {}, the number of existing plugins is {}", newInsertCount.get(), continueCount.get());
+            log.info(
+                    "The plugin has been synchronized successfully, the number of new plugins is {}, the number of existing plugins is {}",
+                    newInsertCount.get(),
+                    continueCount.get());
         } else {
             log.error("The plugin has been synchronized failed ,");
         }
         return saveBatch;
     }
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -117,7 +152,8 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
             throw new BusException("Plugin " + plugin.getName() + " is installed, please uninstall it first.");
         }
         if (!plugin.getDownloaded() && StrUtil.isEmpty(plugin.getPluginLocalStorageFullPath())) {
-            throw new BusException("The plugin " + plugin.getName() + " has not been downloaded and the storage path is empty, so it cannot be deleted");
+            throw new BusException("The plugin " + plugin.getName()
+                    + " has not been downloaded and the storage path is empty, so it cannot be deleted");
         }
         boolean deleted = FileUtil.del(plugin.getPluginLocalStorageFullPath());
         if (!deleted) {
@@ -125,7 +161,6 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         }
         return removeById(id);
     }
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -136,11 +171,15 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         }
         String destFileNameFullPath = LOCAL_REPO_PATH + plugin.getName();
         // todo: 调用下载接口，下载插件, 如果需要账密，则使用账号密码,可能需要重写下载器
-        HttpUtil.buildBasicAuth(systemConfiguration.getMavenRepositoryUser(), systemConfiguration.getMavenRepositoryPassword(),
+        HttpUtil.buildBasicAuth(
+                systemConfiguration.getMavenRepositoryUser(),
+                systemConfiguration.getMavenRepositoryPassword(),
                 StandardCharsets.UTF_8);
         HttpRequest httpRequest = HttpUtil.createGet(plugin.getPluginDownloadUrl());
-        if (StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryUser()) && StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryPassword())) {
-            httpRequest.basicAuth(systemConfiguration.getMavenRepositoryUser(), systemConfiguration.getMavenRepositoryPassword());
+        if (StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryUser())
+                && StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryPassword())) {
+            httpRequest.basicAuth(
+                    systemConfiguration.getMavenRepositoryUser(), systemConfiguration.getMavenRepositoryPassword());
         }
         long downloadedFile = httpRequest.execute().writeBody(destFileNameFullPath);
         if (downloadedFile == 0) {
@@ -172,58 +211,65 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         return false;
     }
 
-//
-//    public void downloadAndLoadDependency(String groupId, String artifactId, String version, String localRepoPath) throws Exception {
-//
-//        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-//        RepositorySystem system = newRepositorySystem(locator);
-//        RepositorySystemSession session = newSession(system, LOCAL_REPO_PATH);
-//
-//        // 定义远程仓库
-//        RemoteRepository.Builder remoteRepository = new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2");
-//        if (StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryUser()) && StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryPassword())) {
-//            Authentication auth = new AuthenticationBuilder()
-//                    .addUsername(systemConfiguration.getMavenRepositoryUser())
-//                    .addPassword(systemConfiguration.getMavenRepositoryPassword())
-//                    .build();
-//            remoteRepository.setAuthentication(auth);
-//        }
-//        RemoteRepository repository = remoteRepository.build();
-//
-//        // 解析依赖
-//        ArtifactRequest artifactRequest = new ArtifactRequest();
-//        artifactRequest.setArtifact(new DefaultArtifact("groupId:artifactId:version"));
-//        artifactRequest.setRepositories(Collections.singletonList(repository));
-//
-//        // 下载依赖
-//        ArtifactResult artifactResult = system
-//                .resolveArtifact(session, artifactRequest);
-//        ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
-//        Artifact artifact = artifactResult.getArtifact();
-//        descriptorRequest.setArtifact(artifact);
-//        descriptorRequest.setRepositories(Collections.singletonList(repository));
-//
-//        Metadata metadata = new DefaultMetadata(artifact.getGroupId(), artifact.getArtifactId(), "maven-metadata.xml", Metadata.Nature.RELEASE_OR_SNAPSHOT);
-//        MetadataRequest metadataRequest = new MetadataRequest(metadata, repository, null);
-//
-//        List<MetadataResult> metadataResult = system.resolveMetadata(session, Collections.singletonList(metadataRequest));
-//        metadataResult.forEach(m -> {
-//            Metadata mMetadata = m.getMetadata();
-//            log.info("metadata: {}", mMetadata);
-//
-//        });
-//    }
+    //
+    //    public void downloadAndLoadDependency(String groupId, String artifactId, String version, String localRepoPath)
+    // throws Exception {
+    //
+    //        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+    //        RepositorySystem system = newRepositorySystem(locator);
+    //        RepositorySystemSession session = newSession(system, LOCAL_REPO_PATH);
+    //
+    //        // 定义远程仓库
+    //        RemoteRepository.Builder remoteRepository = new RemoteRepository.Builder("central", "default",
+    // "https://repo.maven.apache.org/maven2");
+    //        if (StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryUser()) &&
+    // StrUtil.isNotEmpty(systemConfiguration.getMavenRepositoryPassword())) {
+    //            Authentication auth = new AuthenticationBuilder()
+    //                    .addUsername(systemConfiguration.getMavenRepositoryUser())
+    //                    .addPassword(systemConfiguration.getMavenRepositoryPassword())
+    //                    .build();
+    //            remoteRepository.setAuthentication(auth);
+    //        }
+    //        RemoteRepository repository = remoteRepository.build();
+    //
+    //        // 解析依赖
+    //        ArtifactRequest artifactRequest = new ArtifactRequest();
+    //        artifactRequest.setArtifact(new DefaultArtifact("groupId:artifactId:version"));
+    //        artifactRequest.setRepositories(Collections.singletonList(repository));
+    //
+    //        // 下载依赖
+    //        ArtifactResult artifactResult = system
+    //                .resolveArtifact(session, artifactRequest);
+    //        ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
+    //        Artifact artifact = artifactResult.getArtifact();
+    //        descriptorRequest.setArtifact(artifact);
+    //        descriptorRequest.setRepositories(Collections.singletonList(repository));
+    //
+    //        Metadata metadata = new DefaultMetadata(artifact.getGroupId(), artifact.getArtifactId(),
+    // "maven-metadata.xml", Metadata.Nature.RELEASE_OR_SNAPSHOT);
+    //        MetadataRequest metadataRequest = new MetadataRequest(metadata, repository, null);
+    //
+    //        List<MetadataResult> metadataResult = system.resolveMetadata(session,
+    // Collections.singletonList(metadataRequest));
+    //        metadataResult.forEach(m -> {
+    //            Metadata mMetadata = m.getMetadata();
+    //            log.info("metadata: {}", mMetadata);
+    //
+    //        });
+    //    }
 
-//
-//    private static RepositorySystemSession newSession(RepositorySystem system, String storePath) {
-//        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-//        LocalRepository localRepo = new LocalRepository(storePath);
-//        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-//        // set possible proxies and mirrorsD:
-//        //session.setProxySelector(new DefaultProxySelector().add(new Proxy(Proxy.TYPE_HTTP, "host", 3625), Arrays.asList("localhost", "127.0.0.1")));
-//        //session.setMirrorSelector(new DefaultMirrorSelector().add("my-mirror", "http://mirror", "default", false, "external:*", null));
-//        return session;
-//    }
+    //
+    //    private static RepositorySystemSession newSession(RepositorySystem system, String storePath) {
+    //        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+    //        LocalRepository localRepo = new LocalRepository(storePath);
+    //        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
+    //        // set possible proxies and mirrorsD:
+    //        //session.setProxySelector(new DefaultProxySelector().add(new Proxy(Proxy.TYPE_HTTP, "host", 3625),
+    // Arrays.asList("localhost", "127.0.0.1")));
+    //        //session.setMirrorSelector(new DefaultMirrorSelector().add("my-mirror", "http://mirror", "default",
+    // false, "external:*", null));
+    //        return session;
+    //    }
 
     /**
      * Generates a new RepositorySystem using the provided DefaultServiceLocator.
@@ -231,19 +277,19 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
      * @param locator the DefaultServiceLocator used to create the RepositorySystem
      * @return the newly created RepositorySystem
      */
-//    private static RepositorySystem newRepositorySystem(DefaultServiceLocator locator) {
-//        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
-//        locator.addService(TransporterFactory.class, FileTransporterFactory.class);
-//        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-//        return locator.getService(RepositorySystem.class);
-//    }
-//
-//    private void loadJarToLocalClasspath(String path, String jarName) throws MalformedURLException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-//        URLClassLoader classLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-//        Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-//        method.setAccessible(true);
-//        method.invoke(classLoader, new File(path, jarName).toURI().toURL());
-//    }
-
+    //    private static RepositorySystem newRepositorySystem(DefaultServiceLocator locator) {
+    //        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+    //        locator.addService(TransporterFactory.class, FileTransporterFactory.class);
+    //        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
+    //        return locator.getService(RepositorySystem.class);
+    //    }
+    //
+    //    private void loadJarToLocalClasspath(String path, String jarName) throws MalformedURLException,
+    // NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    //        URLClassLoader classLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+    //        Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+    //        method.setAccessible(true);
+    //        method.invoke(classLoader, new File(path, jarName).toURI().toURL());
+    //    }
 
 }
