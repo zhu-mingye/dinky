@@ -248,5 +248,16 @@ export enum PermissionConstants {
    * system log
    */
   SYSTEM_SETTING_INFO_LOG_LIST = '/settings/systemlog/loglist',
-  SYSTEM_SETTING_INFO_ROOT_LOG = '/settings/systemlog/rootlog'
+  SYSTEM_SETTING_INFO_ROOT_LOG = '/settings/systemlog/rootlog',
+
+
+  /**
+   * plugin market
+   */
+  SYSTEM_SETTING_PLUGIN_MARKET_SYNC = '/settings/plugin-market/sync',
+  SYSTEM_SETTING_PLUGIN_MARKET_INSTALL = '/settings/plugin-market/install',
+  SYSTEM_SETTING_PLUGIN_MARKET_UNINSTALL = '/settings/plugin-market/uninstall',
+  SYSTEM_SETTING_PLUGIN_MARKET_DELETE = '/settings/plugin-market/delete',
+  SYSTEM_SETTING_PLUGIN_MARKET_DOWNLOAD = '/settings/plugin-market/download',
+
 }

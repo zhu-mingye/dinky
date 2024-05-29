@@ -17,17 +17,16 @@
  *
  */
 
-import { BaseState } from '@/types/Public/state';
-import {AlertRule, PluginMarketInfo} from '@/types/SettingCenter/data.d';
+import SlowlyAppear from '@/components/Animation/SlowlyAppear';
+import { PageContainer } from '@ant-design/pro-components';
+import PluginMarketingList from "@/pages/SettingCenter/PluginMarketing/components/PluginMarketingList";
 
-export interface AlertRuleListState extends BaseState {
-  value: Partial<AlertRule>;
-}
-
-
-export interface PluginMarketState extends BaseState {
-  value: Partial<AlertRule>;
-  pluginList: PluginMarketInfo[],
-  installed: boolean;
-  downloaded: boolean;
-}
+export default () => {
+  return (
+    <SlowlyAppear>
+      <PageContainer title={false}>
+        <PluginMarketingList/>
+      </PageContainer>
+    </SlowlyAppear>
+  );
+};

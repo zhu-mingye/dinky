@@ -19,6 +19,7 @@
 
 package org.dinky.service.impl;
 
+import java.util.ArrayList;
 import org.dinky.config.Dialect;
 import org.dinky.data.model.Resources;
 import org.dinky.data.model.udf.UDFManage;
@@ -167,11 +168,9 @@ public class UDFServiceImpl extends ServiceImpl<UDFManageMapper, UDFManage> impl
                         .anyMatch(resources -> resources.getId().equals(udf.getResourcesId())))
                 .collect(Collectors.toList());
         // 去重 根据 className 去重 || distinct by className
-        return collect.stream()
+        return new ArrayList<>(collect.stream()
                 .collect(Collectors.toMap(UDFManage::getClassName, udf -> udf, (a, b) -> a))
-                .values()
-                .stream()
-                .collect(Collectors.toList());
+                .values());
     }
 
     /**
@@ -189,17 +188,17 @@ public class UDFServiceImpl extends ServiceImpl<UDFManageMapper, UDFManage> impl
                 .map(UDFUtils::resourceUdfManageToUDF)
                 .collect(Collectors.toList());
 
-        CascaderVO staticUdfCascaderVO = new CascaderVO(
+        CascaderVO staticUdfCascaderVO = new CascaderVO("Flink Static UDF",
                 "Flink Static UDF",
                 staticUdfs.stream()
                         .map(udf -> new CascaderVO(udf.getClassName(), udf.getClassName()))
                         .collect(Collectors.toList()));
-        CascaderVO userDefinedUdfCascaderVO = new CascaderVO(
+        CascaderVO userDefinedUdfCascaderVO = new CascaderVO("User Defined Release UDF",
                 "User Defined Release UDF",
                 userDefinedReleaseUdfs.stream()
                         .map(udf -> new CascaderVO(udf.getClassName(), udf.getClassName()))
                         .collect(Collectors.toList()));
-        CascaderVO udfManageDynamicCascaderVO = new CascaderVO(
+        CascaderVO udfManageDynamicCascaderVO = new CascaderVO("From UDF Manage",
                 "From UDF Manage",
                 udfManageDynamic.stream()
                         .map(udf -> new CascaderVO(udf.getClassName(), udf.getClassName()))

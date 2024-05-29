@@ -17,6 +17,14 @@
  *
  */
 
+import {BaseBeanColumns} from "@/types/Public/data";
+import {
+  AlertInstanceParamsDingTalk,
+  AlertInstanceParamsEmail,
+  AlertInstanceParamsFeiShu, AlertInstanceParamsHttp, AlertInstanceParamsSms,
+  AlertInstanceParamsWeChat
+} from "@/types/RegCenter/data";
+
 export type ProcessSteps = {
   stepStatus: string;
   info: string;
@@ -110,6 +118,7 @@ export enum GLOBAL_SETTING_KEYS {
   SYS_MAVEN_SETTINGS_REPOSITORY = 'sys.maven.settings.repository',
   SYS_MAVEN_SETTINGS_REPOSITORY_USER = 'sys.maven.settings.repositoryUser',
   SYS_MAVEN_SETTINGS_REPOSITORY_PASSWORD = 'sys.maven.settings.repositoryPassword',
+  SYS_MAVEN_SETTINGS_PLUGIN_ENABLE_PLUGIN_MARKET = 'sys.maven.settings.plugin.enablePluginMarket',
   SYS_ENV_SETTINGS_PYTHON_HOME = 'sys.env.settings.pythonHome',
   SYS_ENV_SETTINGS_DINKY_ADDR = 'sys.env.settings.dinkyAddr',
   SYS_ENV_SETTINGS_JOB_RESEND_DIFF_SECOND = 'sys.env.settings.jobResendDiffSecond',
@@ -151,3 +160,23 @@ export enum GLOBAL_SETTING_KEYS {
   SYS_RESOURCE_SETTINGS_HDFS_CORE_SITE = 'sys.resource.settings.hdfs.core.site',
   SYS_RESOURCE_SETTINGS_HDFS_HDFS_SITE = 'sys.resource.settings.hdfs.hdfs.site'
 }
+
+/**
+ * Plugin Market
+ */
+
+export type PluginMarketInfo = BaseBeanColumns & {
+  pluginId: string;
+  pluginDownloadUrl: string; // pluginDownloadUrl
+  pluginLocalStorageFullPath: string;
+  organization: string;
+  repositoryId: string;
+  pluginReleaseTimestamp: string;
+  description: string;
+  groupId: string;
+  artifactId: string;
+  currentVersion: string;
+  versionCount: number;
+  installed: boolean;
+   downloaded: boolean;
+};

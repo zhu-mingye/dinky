@@ -18,10 +18,10 @@
  */
 
 import GeneralConfig from '@/pages/SettingCenter/GlobalSetting/SettingOverView/GeneralConfig';
-import { BaseConfigProperties } from '@/types/SettingCenter/data';
+import {BaseConfigProperties, GLOBAL_SETTING_KEYS} from '@/types/SettingCenter/data.d';
 import { l } from '@/utils/intl';
 import { Tag } from 'antd';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 interface MavenConfigProps {
   data: BaseConfigProperties[];
@@ -29,8 +29,38 @@ interface MavenConfigProps {
   auth: string;
 }
 
+type MavenConfigState = {
+  base: BaseConfigProperties[];
+  pluginMarket: BaseConfigProperties[];
+};
+
 export const MavenConfig = ({ data, onSave, auth }: MavenConfigProps) => {
   const [loading, setLoading] = React.useState(false);
+
+  const [enablePluginMarket, setEnablePluginMarket] = React.useState(false);
+  const [filterData, setFilterData] = useState<MavenConfigState>({
+    base: [],
+    pluginMarket: [],
+  });
+
+  useEffect(() => {
+    // 处理 data / 规则: 前缀为 sys.resource.settings.base 的为基础配置，其他的为 hdfs/oss 配置
+    const base: BaseConfigProperties[] = data.filter((d) =>
+      d.key.startsWith('sys.maven.settings')
+    );
+    const pluginMarket: BaseConfigProperties[] = data.filter((d) =>
+      !d.key.startsWith('sys.maven.settings') && d.key.startsWith('sys.maven.settings.plugin')
+    );
+    setFilterData({ base, pluginMarket});
+    // 获取是否开启插件市场
+    const isEnablePluginMarket = base.find(
+      (d) => d.key === GLOBAL_SETTING_KEYS.SYS_MAVEN_SETTINGS_PLUGIN_ENABLE_PLUGIN_MARKET
+    )?.value;
+    console.log('isEnablePluginMarket', isEnablePluginMarket);
+    if (isEnablePluginMarket) {
+      setEnablePluginMarket(isEnablePluginMarket === 'true');
+    }
+  }, [data]);
 
   const onSaveHandler = async (data: BaseConfigProperties) => {
     setLoading(true);
@@ -49,8 +79,23 @@ export const MavenConfig = ({ data, onSave, auth }: MavenConfigProps) => {
             <Tag color={'default'}>{l('sys.setting.tag.integration')}</Tag>
           </>
         }
-        data={data}
+        data={filterData.base}
       />
+      {
+        enablePluginMarket && (
+          <GeneralConfig
+            loading={loading}
+            onSave={onSaveHandler}
+            auth={auth}
+            tag={
+              <>
+                <Tag color={'default'}>{l('sys.setting.tag.plugin_market')}</Tag>
+              </>
+            }
+            data={filterData.pluginMarket}
+          />
+        )
+      }
     </>
   );
 };

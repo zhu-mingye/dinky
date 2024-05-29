@@ -451,7 +451,7 @@ export default {
   'pages.datastudio.label.jobConfig.addConfig.value': 'value',
   'pages.datastudio.label.udf': 'Udf Item',
   'pages.datastudio.label.udf.tip': 'Inject UDF item, Automatically add statement `create temporary function [functionName] as [className]` at the beginning of the SQL statement',
-  'pages.datastudio.label.udf.duplicate.tip': 'The class [className] selected this time already exists and duplicate injection is not allowed. Please reselect or cancel injection (delete and change line).',
+  'pages.datastudio.label.udf.duplicate.tip': 'The class [{className}] selected this time already exists and duplicate injection is not allowed. Please reselect or cancel injection (delete and change line).',
   'pages.datastudio.label.udf.injectUdf': 'Inject UDF item',
   'pages.datastudio.label.udf.name': 'function name',
   'pages.datastudio.label.udf.className': 'class name',
@@ -1006,7 +1006,8 @@ export default {
     'Support for a single or bulk upload. Strictly prohibited from uploading company data or\n          other banned files.',
   'rc.resource.filelist': 'File list',
   'rc.resource.sync': 'Sync remote files',
-  'rc.resource.sync.confirm': 'Please note that this operation will delete all records in the database and will affect running jobs as well as corresponding resource files referenced in UDF management, resulting in job failure. And UDF cannot be used in UDF management Please operate with caution!! Please confirm if you want to continue?',
+  'rc.resource.sync.confirm':
+    'Please note that this operation will delete all records in the database and will affect running jobs as well as corresponding resource files referenced in UDF management, resulting in job failure. And UDF cannot be used in UDF management Please operate with caution!! Please confirm if you want to continue?',
   'rc.resource.copy_to_add_custom_jar': 'Copy as ADD CUSTOMJAR syntax',
   'rc.resource.copy_to_add_jar': 'Copy as ADD JAR syntax',
   'rc.resource.copy_to_add_file': 'Copy as ADD FILE syntax',
@@ -1132,6 +1133,7 @@ export default {
   'sys.setting.metrics.tooltip': 'Monitor monitoring page settings, adjust Metrics detection',
   'sys.setting.modify': 'Modify Settings {key}',
   'sys.setting.resource': 'Resource Configuration',
+  'sys.setting.plugin': 'Plugin Market Configuration',
   'sys.setting.tag.core': 'Core Configuration',
   'sys.setting.tag.extend': 'Extended Configuration',
   'sys.setting.tag.integration': 'Integration Configuration',
@@ -1143,6 +1145,11 @@ export default {
   'sys.ldap.settings.keyword':
     'You can enter your username/nickname for search, support fuzzy queries, enter keywords and press enter to complete the search',
   'sys.ldap.settings.loadable': 'Whether it can be imported',
+  'sys.plugin.market.title': 'Plugin Market',
+  'sys.plugin.market.deleteConfirm ': ' Are you sure you want to delete this plugin? ',
+  'sys.plugin.market.delete ': ' Delete plugin ',
+  'sys.plugin.market.uninstall ': ' Uninstall plugin ',
+  'sys.plugin.market.uninstallConfirm ': ' Are you sure you want to uninstall this plugin? ',
   /**
    *
    * tenant

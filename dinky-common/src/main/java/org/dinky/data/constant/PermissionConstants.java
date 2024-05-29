@@ -240,4 +240,16 @@ public class PermissionConstants {
     public static final String SYSTEM_SETTING_INFO_LOG_LIST = "settings:systemlog:loglist";
 
     public static final String SYSTEM_SETTING_INFO_ROOT_LOG = "settings:systemlog:rootlog";
+
+
+    /**
+     * plugin market
+     */
+    public static final String  SYSTEM_SETTING_PLUGIN_MARKET_SYNC = "settings:plugin-market:sync";
+    public static final String  SYSTEM_SETTING_PLUGIN_MARKET_INSTALL = "settings:plugin-market:install";
+    public static final String  SYSTEM_SETTING_PLUGIN_MARKET_UNINSTALL = "settings:plugin-market:uninstall";
+    public static final String  SYSTEM_SETTING_PLUGIN_MARKET_DELETE = "settings:plugin-market:delete";
+    public static final String  SYSTEM_SETTING_PLUGIN_MARKET_DOWNLOAD = "settings:plugin-market:download";
+
+
 }
