@@ -192,6 +192,7 @@ export enum API_CONSTANTS {
 
   // ------------------------------------ plugin market ------------------------------------
   PLUGIN_MARKET_SYNC = '/api/plugin-marketing/sync',
+  PLUGIN_MARKET_QUERY_ALL_VERSION = '/api/plugin-marketing/query-all-version-by-plugin-id',
   PLUGIN_MARKET_LIST = '/api/plugin-marketing/list',
   PLUGIN_MARKET_DOWNLOAD = '/api/plugin-marketing/download',
   PLUGIN_MARKET_INSTALL = '/api/plugin-marketing/install',

@@ -29,4 +29,7 @@ export interface PluginMarketState extends BaseState {
   pluginList: PluginMarketInfo[];
   installed: boolean;
   downloaded: boolean;
+  chooseVersion: boolean;
+  chooseVersionValue: string;
+  versionList: string[];
 }

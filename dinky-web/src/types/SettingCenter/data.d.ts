@@ -171,6 +171,7 @@ export type PluginMarketInfo = BaseBeanColumns & {
   pluginId: string;
   pluginDownloadUrl: string; // pluginDownloadUrl
   pluginLocalStorageFullPath: string;
+  pluginResourceStorageFullPath: string;
   organization: string;
   repositoryId: string;
   pluginReleaseTimestamp: string;

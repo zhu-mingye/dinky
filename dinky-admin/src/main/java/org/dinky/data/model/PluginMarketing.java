@@ -41,6 +41,8 @@ public class PluginMarketing extends SuperEntity<PluginMarketing> {
     private String pluginDownloadUrl;
     // 本地完整存储路径 e.g.: "/Users/dinky/Downloads/flink-sql-connector-mongodb-cdc-1.0.jar"
     private String pluginLocalStorageFullPath;
+    // 资源完整存储路径 e.g.: "rs:/plugin-marketing/flink-sql-connector-mongodb-cdc-1.0.jar"
+    private String pluginResourceStorageFullPath;
     // 插件所属组织 e.g: "org.apache.flink"
     private String organization;
     // 插件所属仓库  e.g: "central"

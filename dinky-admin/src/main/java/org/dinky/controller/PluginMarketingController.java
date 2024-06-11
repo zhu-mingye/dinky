@@ -19,6 +19,8 @@
 
 package org.dinky.controller;
 
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.dinky.data.constant.PermissionConstants;
 import org.dinky.data.enums.Status;
 import org.dinky.data.model.PluginMarketing;
@@ -47,13 +49,12 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @Api(tags = "Plugin Marketing Controller")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/plugin-marketing")
 @SaCheckLogin
 public class PluginMarketingController {
 
-    @Autowired
-    private PluginMarketingService pluginMarketService;
+    private final PluginMarketingService pluginMarketService;
 
     @GetMapping("/sync")
     @SaCheckPermission(PermissionConstants.SYSTEM_SETTING_PLUGIN_MARKET_SYNC)
@@ -71,32 +72,35 @@ public class PluginMarketingController {
     public ProTableResult<PluginMarketing> listToken(@RequestBody JsonNode params) {
         return pluginMarketService.selectForProTable(params);
     }
-    //    public Result<List<PluginMarketing>> listPlugins(
-    //            @RequestParam(defaultValue = "") String keyword,
-    //            @RequestParam(defaultValue = "false") boolean installed,
-    //             @RequestParam(defaultValue = "false") boolean isDownloaded
-    //    ) {
-    //        return Result.succeed(pluginMarketService.listPlugins(keyword,installed,isDownloaded));
-    //    }
 
-    @PutMapping("/download")
+
+    @GetMapping("/query-all-version-by-plugin-id")
+    @ApiOperation("Get Plugin List")
+    @ApiImplicitParam(name = "params", value = "params", dataType = "JsonNode", paramType = "body", required = true)
+    public Result<List<String>> queryAllVersionByPluginId(@RequestParam(required = true) Integer id) {
+        List<String> pluginMarketings = pluginMarketService.queryAllVersionByPluginId(id);
+        return Result.succeed(pluginMarketings);
+    }
+
+
+
+    @PostMapping("/download")
     @ApiOperation("Download Plugin")
-    @ApiImplicitParam(name = "id", value = "id", dataType = "Integer", paramType = "query", required = true)
     @SaCheckPermission(PermissionConstants.SYSTEM_SETTING_PLUGIN_MARKET_DOWNLOAD)
-    public Result<Void> downloadPlugin(@RequestParam("id") Integer id) {
-        boolean downloadAndLoadDependency = pluginMarketService.downloadedPlugin(id);
+    public Result<Void> downloadPlugin(@RequestBody PluginMarketing pluginMarketing) {
+        boolean downloadAndLoadDependency = pluginMarketService.downloadedPlugin(pluginMarketing);
         if (!downloadAndLoadDependency) {
             return Result.failed(Status.DOWNLOAD_FAILED);
         }
         return Result.succeed(Status.DELETE_SUCCESS);
     }
 
-    @PutMapping("/install")
+    @PostMapping("/install")
     @ApiOperation("Install Plugin")
     @ApiImplicitParam(name = "id", value = "id", dataType = "Integer", paramType = "query", required = true)
     @SaCheckPermission(PermissionConstants.SYSTEM_SETTING_PLUGIN_MARKET_INSTALL)
-    public Result<Void> installPlugin(@RequestParam("id") Integer id) {
-        boolean downloadAndLoadDependency = pluginMarketService.installPlugin(id);
+    public Result<Void> installPlugin(@RequestBody PluginMarketing pluginMarketing) {
+        boolean downloadAndLoadDependency = pluginMarketService.installPlugin(pluginMarketing);
         if (!downloadAndLoadDependency) {
             return Result.failed(Status.INSTALL_FAILED);
         }

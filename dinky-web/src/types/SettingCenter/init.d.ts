@@ -35,29 +35,11 @@ export const InitPluginMarketState: PluginMarketState = {
   addedOpen: false,
   editOpen: false,
   loading: false,
-  installed: true,
-  downloaded: true,
-  pluginList: [
-    {
-      id: 0,
-      createTime: new Date(),
-      updateTime: new Date(),
-      name: '111223',
-      enabled: false,
-      pluginId: 'centeral',
-      pluginDownloadUrl: 'http://www.baidu.com',
-      pluginLocalStorageFullPath: '/tmp/dubbo',
-      organization: 'flink',
-      repositoryId: 'flink',
-      pluginReleaseTimestamp: new Date(),
-      description: 'hahahah',
-      groupId: 'org.apache.flink',
-      artifactId: 'flink-connector-kafka_2.11',
-      currentVersion: '3.0.0',
-      versionCount: 1,
-      installed: false,
-      downloaded: false
-    }
-  ],
+  installed: false,
+  downloaded: false,
+  chooseVersion : false,
+  chooseVersionValue: '',
+  pluginList: [],
+  versionList: [],
   value: {}
 };

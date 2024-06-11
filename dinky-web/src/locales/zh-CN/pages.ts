@@ -1119,10 +1119,12 @@ export default {
   'sys.plugin.market.pluginId': '插件ID',
   'sys.plugin.market.downloadUrl': '下载地址',
   'sys.plugin.market.localStorageFullPath': '本地存储路径',
+  'sys.plugin.market.resourceStorageFullPath': '资源中心路径',
   'sys.plugin.market.organization': '组织',
   'sys.plugin.market.repositoryId': '仓库ID',
   'sys.plugin.market.pluginReleaseTimestamp': '发布时间',
   'sys.plugin.market.description': '描述',
+  'sys.plugin.market.versionCount': '版本数量',
   'sys.plugin.market.pluginInfo': '插件信息',
   'sys.plugin.market.enable': '未启用插件市场功能',
   'sys.plugin.market.enable.tips':

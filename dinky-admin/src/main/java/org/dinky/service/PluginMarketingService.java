@@ -19,6 +19,7 @@
 
 package org.dinky.service;
 
+import java.util.List;
 import org.dinky.data.model.PluginMarketing;
 import org.dinky.mybatis.service.ISuperService;
 
@@ -49,14 +50,16 @@ public interface PluginMarketingService extends ISuperService<PluginMarketing> {
      * @param id 插件id
      * @return 下载成功 true 下载失败 false
      */
-    boolean downloadedPlugin(Integer id);
+    boolean downloadedPlugin(PluginMarketing pluginMarketing);
 
     /**
      * 安装插件
      * @param id 插件id
      * @return 安装成功 true 安装失败 false
      */
-    boolean installPlugin(Integer id);
+    boolean installPlugin(PluginMarketing pluginMarketing);
+
+    List<String> queryAllVersionByPluginId(Integer pluginId);
 
     /**
      * 下载并加载依赖
