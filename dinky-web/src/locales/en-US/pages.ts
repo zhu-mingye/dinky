@@ -453,7 +453,7 @@ export default {
   'pages.datastudio.label.udf.tip':
     'Inject UDF item, Automatically add statement `create temporary function [functionName] as [className]` at the beginning of the SQL statement',
   'pages.datastudio.label.udf.duplicate.tip':
-    'The class [className] selected this time already exists and duplicate injection is not allowed. Please reselect or cancel injection (delete and change line).',
+    'The class [{className}] selected this time already exists and duplicate injection is not allowed. Please reselect or cancel injection (delete and change line).',
   'pages.datastudio.label.udf.injectUdf': 'Inject UDF item',
   'pages.datastudio.label.udf.name': 'function name',
   'pages.datastudio.label.udf.className': 'class name',
@@ -1135,6 +1135,7 @@ export default {
   'sys.setting.metrics.tooltip': 'Monitor monitoring page settings, adjust Metrics detection',
   'sys.setting.modify': 'Modify Settings {key}',
   'sys.setting.resource': 'Resource Configuration',
+  'sys.setting.plugin': 'Plugin Market Configuration',
   'sys.setting.tag.core': 'Core Configuration',
   'sys.setting.tag.extend': 'Extended Configuration',
   'sys.setting.tag.integration': 'Integration Configuration',
@@ -1146,6 +1147,11 @@ export default {
   'sys.ldap.settings.keyword':
     'You can enter your username/nickname for search, support fuzzy queries, enter keywords and press enter to complete the search',
   'sys.ldap.settings.loadable': 'Whether it can be imported',
+  'sys.plugin.market.title': 'Plugin Market',
+  'sys.plugin.market.deleteConfirm ': ' Are you sure you want to delete this plugin? ',
+  'sys.plugin.market.delete ': ' Delete plugin ',
+  'sys.plugin.market.uninstall ': ' Uninstall plugin ',
+  'sys.plugin.market.uninstallConfirm ': ' Are you sure you want to uninstall this plugin? ',
   /**
    *
    * tenant

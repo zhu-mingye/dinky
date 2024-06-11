@@ -19,6 +19,7 @@
 
 import {
   queryDsConfig,
+  queryEnablePluginMarket,
   queryResourceConfig,
   queryTaskOwnerLockingStrategy
 } from '@/pages/SettingCenter/GlobalSetting/service';
@@ -38,6 +39,7 @@ export type SysConfigStateType = {
   enabledDs: boolean;
   enableResource: boolean;
   taskOwnerLockingStrategy: TaskOwnerLockingStrategy;
+  enablePluginMarket: boolean;
 };
 
 export type ConfigModelType = {
@@ -47,12 +49,14 @@ export type ConfigModelType = {
     queryDsConfig: Effect;
     queryResourceConfig: Effect;
     queryTaskOwnerLockingStrategy: Effect;
+    queryEnablePluginMarket: Effect;
   };
   reducers: {
     saveDsConfig: Reducer<SysConfigStateType>;
     updateEnabledDs: Reducer<SysConfigStateType>;
     updateEnableResource: Reducer<SysConfigStateType>;
     updateTaskOwnerLockingStrategy: Reducer<SysConfigStateType>;
+    updateEnablePluginMarket: Reducer<SysConfigStateType>;
   };
 };
 
@@ -62,7 +66,8 @@ const ConfigModel: ConfigModelType = {
     dsConfig: [],
     enabledDs: false,
     enableResource: false,
-    taskOwnerLockingStrategy: TaskOwnerLockingStrategy.ALL
+    taskOwnerLockingStrategy: TaskOwnerLockingStrategy.ALL,
+    enablePluginMarket: false
   },
 
   effects: {
@@ -114,9 +119,26 @@ const ConfigModel: ConfigModelType = {
           payload: enableResource
         });
       }
+    },
+    *queryEnablePluginMarket({ payload }, { call, put }) {
+      const response: BaseConfigProperties[] = yield call(queryEnablePluginMarket, payload);
+      yield put({
+        type: 'saveDsConfig',
+        payload: response || []
+      });
+      if (response && response.length > 0) {
+        const enablePluginMarket = response.some(
+          (item: BaseConfigProperties) =>
+            item.key === GLOBAL_SETTING_KEYS.SYS_MAVEN_SETTINGS_PLUGIN_ENABLE_PLUGIN_MARKET &&
+            item.value === true
+        );
+        yield put({
+          type: 'updateEnablePluginMarket',
+          payload: enablePluginMarket
+        });
+      }
     }
   },
-
   reducers: {
     saveDsConfig(state, { payload }) {
       return {
@@ -140,6 +162,12 @@ const ConfigModel: ConfigModelType = {
       return {
         ...state,
         enableResource: payload
+      };
+    },
+    updateEnablePluginMarket(state, { payload }) {
+      return {
+        ...state,
+        enablePluginMarket: payload
       };
     }
   }

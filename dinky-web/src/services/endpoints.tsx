@@ -190,6 +190,14 @@ export enum API_CONSTANTS {
   KILL_PROCESS = '/api/process/killProcess',
   PROCESS_LOG_CLEAR = '/api/process/clearProcessLog',
 
+  // ------------------------------------ plugin market ------------------------------------
+  PLUGIN_MARKET_SYNC = '/api/plugin-marketing/sync',
+  PLUGIN_MARKET_LIST = '/api/plugin-marketing/list',
+  PLUGIN_MARKET_DOWNLOAD = '/api/plugin-marketing/download',
+  PLUGIN_MARKET_INSTALL = '/api/plugin-marketing/install',
+  PLUGIN_MARKET_UNINSTALL = '/api/plugin-marketing/uninstall',
+  PLUGIN_MARKET_DELETE = '/api/plugin-marketing/delete',
+
   /** ------------------------------------------------ Devops center  ------------------------------------ */
   // ------------------------------------ devops job  ------------------------------------
   JOB_INSTANCE = '/api/jobInstance',

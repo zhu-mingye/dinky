@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dinky.mapper.PluginMarketingMapper">
+    <select id="selectForProTable" resultType="org.dinky.data.model.PluginMarketing">
+        select
+        *
+        from
+        dinky_plugin_marketing a
+        <where>
+            1=1
+            <if test='param.name!=null and param.name!=""'>
+                and `name` like concat('%',#{param.name},'%')
+            </if>
+            <if test='param.pluginId!=null and param.pluginId!=""'>
+                and `plugin_id` like concat('%',#{param.pluginId},'%')
+            </if>
+            <if test='param.pluginDownloadUrl!=null and param.pluginDownloadUrl!=""'>
+                and `plugin_download_url` like concat('%',#{param.pluginDownloadUrl},'%')
+            </if>
+            <if test='param.pluginLocalStorageFullPath!=null and param.pluginLocalStorageFullPath!=""'>
+                and `plugin_local_storage_full_path` like concat('%',#{param.pluginLocalStorageFullPath},'%')
+            </if>
+            <if test='param.organization!=null and param.organization!=""'>
+                and `organization` like concat('%',#{param.organization},'%')
+            </if>
+            <if test='param.repositoryId!=null and param.repositoryId!=""'>
+                and `repository_id` like concat('%',#{param.repositoryId},'%')
+            </if>
+            <if test='param.description!=null and param.description!=""'>
+                and `description` like concat('%',#{param.description},'%')
+            </if>
+            <if test='param.groupId!=null and param.groupId!=""'>
+                and `group_id` like concat('%',#{param.groupId},'%')
+            </if>
+            <if test='param.artifactId!=null and param.artifactId!=""'>
+                and `artifact_id` like concat('%',#{param.artifactId},'%')
+            </if>
+            <if test='param.currentVersion!=null and param.currentVersion!=""'>
+                and `current_version` like concat('%',#{param.currentVersion},'%')
+            </if>
+            <if test='param.installed!=null and param.installed!=""'>
+                and `installed` = #{param.installed}
+            </if>
+            <if test='param.downloaded!=null and param.downloaded!=""'>
+                and `downloaded` = #{param.downloaded}
+            </if>
+
+            <if test='param.pluginReleaseTimestamp!=null and param.pluginReleaseTimestamp!=""'>
+                and plugin_release_timestamp <![CDATA[>=]]> str_to_date( #{param.pluginReleaseTimestamp},'%Y-%m-%d
+                %H:%i:%s')
+            </if>
+            <if test='param.createTime!=null and param.createTime!=""'>
+                and create_time <![CDATA[>=]]> str_to_date( #{param.createTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test='param.updateTime!=null and param.updateTime!=""'>
+                and update_time <![CDATA[>=]]> str_to_date( #{param.updateTime},'%Y-%m-%d %H:%i:%s')
+            </if>
+            <if test='ew.sqlSegment!=null and ew.sqlSegment!="" and !ew.sqlSegment.startsWith(" ORDER BY")'>
+                and
+            </if>
+            <if test='ew.sqlSegment!=null and ew.sqlSegment!=""'>
+                ${ew.sqlSegment}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

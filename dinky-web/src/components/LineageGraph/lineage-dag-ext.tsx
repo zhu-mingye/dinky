@@ -21,7 +21,9 @@ import LineageDag from 'react-lineage-dag';
 
 import * as _ from 'lodash';
 import * as ReactDOM from 'react-dom';
+// @ts-ignore
 import { transformEdges, transformInitData } from 'react-lineage-dag/src/adaptor';
+// @ts-ignore
 import LineageCanvas from 'react-lineage-dag/src/canvas/canvas';
 
 export default class LineageDagExt extends LineageDag {
@@ -78,7 +80,7 @@ export default class LineageDagExt extends LineageDag {
     this.originEdges = result.edges;
 
     result = transformEdges(result.nodes, _.cloneDeep(result.edges));
-    result.edges = result.edges.map((item) => {
+    result.edges = result.edges.map((item: any) => {
       return {
         ...item,
         // 线条的类型: Bezier/Flow/Straight/Manhattan/AdvancedBezier/Bezier2-1/Bezier2-2/Bezier2-3/BrokenLine , 新版本可以指定 但是布局调整了
@@ -100,7 +102,7 @@ export default class LineageDagExt extends LineageDag {
         this.canvas.draw(result, () => {
           this.canvas.relayout(
             {
-              edges: tmpEdges.map((item) => {
+              edges: tmpEdges.map((item: { sourceNode: any; targetNode: any }) => {
                 return {
                   source: item.sourceNode,
                   target: item.targetNode
@@ -113,11 +115,11 @@ export default class LineageDagExt extends LineageDag {
           this.canvas.addEdges(tmpEdges, true);
 
           let minimap = _.get(this, 'props.config.minimap', {});
-
+          // @ts-ignore
           const minimapCfg = _.assign({}, minimap.config, {
             events: ['system.node.click', 'system.canvas.click']
           });
-
+          // @ts-ignore
           if (minimap && minimap.enable) {
             this.canvas.setMinimap(true, minimapCfg);
           }
@@ -134,7 +136,7 @@ export default class LineageDagExt extends LineageDag {
           this.forceUpdate();
           this.props.onLoaded && this.props.onLoaded(this.canvas);
         });
-        this.canvas.on('system.node.click', (data) => {
+        this.canvas.on('system.node.click', (data: { node: any }) => {
           let node = data.node;
           this.canvas.focus(node.id);
         });

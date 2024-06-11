@@ -83,6 +83,7 @@ export default {
   'menu.settings.systemlog': '系统日志',
   'menu.settings.classloaderjars': '类加载器 Jars',
   'menu.settings.process': '进程列表',
+  'menu.settings.pluginmarket': '插件市场',
   'menu.settings.services': '服务器列表',
   'menu.metrics': '监控',
   'menu.about': '关于',

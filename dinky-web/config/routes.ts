@@ -280,6 +280,12 @@ export default [
         name: 'classloaderjars',
         icon: 'CodepenOutlined',
         component: './SettingCenter/ClassLoaderJars'
+      },
+      {
+        path: '/settings/pluginmarket',
+        name: 'pluginmarket',
+        icon: 'CodepenOutlined',
+        component: './SettingCenter/PluginMarketing'
       }
     ]
   },

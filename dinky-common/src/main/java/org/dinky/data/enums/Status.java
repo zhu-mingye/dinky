@@ -93,6 +93,14 @@ public enum Status {
     OFFLINE_FAILED(9036, "offline.failed"),
     VERSION_ROLLBACK_SUCCESS(9037, "version.rollback.success"),
     VERSION_ROLLBACK_FAILED(9038, "version.rollback.failed"),
+    DOWNLOAD_SUCCESS(9039, "download.success"),
+    DOWNLOAD_FAILED(9040, "download.failed"),
+    INSTALL_SUCCESS(9041, "install.success"),
+    INSTALL_FAILED(9042, "install.failed"),
+    UNINSTALL_SUCCESS(9043, "uninstall.success"),
+    UNINSTALL_FAILED(9044, "uninstall.failed"),
+    SYNC_SUCCESS(9045, "sync.success"),
+    SYNC_FAILED(9046, "sync.failed"),
 
     /**
      * user,tenant,role
@@ -341,6 +349,15 @@ public enum Status {
     SYS_MAVEN_SETTINGS_REPOSITORYUSER_NOTE(111, "sys.maven.settings.repositoryUser.note"),
     SYS_MAVEN_SETTINGS_REPOSITORYPASSWORD(112, "sys.maven.settings.repositoryPassword"),
     SYS_MAVEN_SETTINGS_REPOSITORYPASSWORD_NOTE(113, "sys.maven.settings.repositoryPassword.note"),
+    SYS_MAVEN_SETTINGS_ENABLE_PLUGIN_MARKET(120, "sys.maven.settings.plugin.enablePluginMarket"),
+    SYS_MAVEN_SETTINGS_ENABLE_PLUGIN_MARKET_NOTE(121, "sys.maven.settings.plugin.enablePluginMarket.note"),
+    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD(122, "sys.maven.settings.plugin.pluginMarketSearchKeyWord"),
+    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_NOTE(
+            123, "sys.maven.settings.plugin.pluginMarketSearchKeyWord.note"),
+    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS(
+            124, "sys.maven.settings.plugin.pluginMarketSearchKeyWordOfNumbers"),
+    SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD_OF_NUMBERS_NOTE(
+            125, "sys.maven.settings.plugin.pluginMarketSearchKeyWordOfNumbers.note"),
 
     SYS_ENV_SETTINGS_PYTHONHOME(114, "sys.env.settings.pythonHome"),
     SYS_ENV_SETTINGS_PYTHONHOME_NOTE(115, "sys.env.settings.pythonHome.note"),

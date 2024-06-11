@@ -24,13 +24,15 @@ import React from 'react';
 
 type NormalDeleteButtonProps = {
   onClick: () => void;
+  disabled?: boolean;
 };
 
 export const NormalDeleteBtn: React.FC<NormalDeleteButtonProps> = (props) => {
-  const { onClick } = props;
+  const { onClick, disabled = false } = props;
 
   return (
     <Button
+      disabled={disabled}
       className={'options-button'}
       icon={<DangerDeleteIcon />}
       title={l('button.delete')}

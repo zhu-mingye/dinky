@@ -432,7 +432,7 @@ export default {
   'pages.datastudio.label.udf.tip':
     '注入UDF算子, 自动在所有语句前注入`create temporary function [functionName] as [className]` 语句',
   'pages.datastudio.label.udf.duplicate.tip':
-    '此次选择的类[className]已经存在,不允许重复注入,请重新选择,或者取消注入(删除改行即可)。',
+    '此次选择的类[{className}]已经存在,不允许重复注入,请重新选择,或者取消注入(删除改行即可)。',
   'pages.datastudio.label.udf.injectUdf': '注入UDF',
   'pages.datastudio.label.udf.name': '函数名称',
   'pages.datastudio.label.udf.className': '类名',
@@ -1089,6 +1089,7 @@ export default {
   'sys.setting.metrics.tooltip': 'Monitor 监控页面设置，调整Metrics探测',
   'sys.setting.modify': '修改配置 {key}',
   'sys.setting.resource': 'Resource 配置',
+  'sys.setting.plugin': '插件市场配置',
   'sys.setting.tag.core': '核心配置',
   'sys.setting.tag.extend': '扩展配置',
   'sys.setting.tag.integration': '集成配置',
@@ -1099,6 +1100,34 @@ export default {
   'sys.ldap.settings.loadUser': '导入用户',
   'sys.ldap.settings.keyword': '可输入用户名/昵称进行搜索,支持模糊查询,输入关键词后回车即可',
   'sys.ldap.settings.loadable': '是否可以导入',
+  'sys.plugin.market.title': '插件市场',
+  'sys.plugin.market.deleteConfirm': '您确定要删除此插件吗？',
+  'sys.plugin.market.delete': '删除插件',
+  'sys.plugin.market.uninstall': '卸载插件',
+  'sys.plugin.market.uninstallConfirm': '您确定要卸载此插件吗？',
+  'sys.plugin.market.install': '安装插件',
+  'sys.plugin.market.installConfirm': '您确定要安装此插件吗？',
+  'sys.plugin.market.installed': '已安装',
+  'sys.plugin.market.uninstalled': '未安装',
+  'sys.plugin.market.download': '下载插件',
+  'sys.plugin.market.downloaded': '已下载',
+  'sys.plugin.market.notDownloaded': '未下载',
+  'sys.plugin.market.install.download.info': '插件情况',
+  'sys.plugin.market.install.info': '下载情况',
+  'sys.plugin.market.download.info': '安装情况',
+  'sys.plugin.market.name': '插件名称',
+  'sys.plugin.market.pluginId': '插件ID',
+  'sys.plugin.market.downloadUrl': '下载地址',
+  'sys.plugin.market.localStorageFullPath': '本地存储路径',
+  'sys.plugin.market.organization': '组织',
+  'sys.plugin.market.repositoryId': '仓库ID',
+  'sys.plugin.market.pluginReleaseTimestamp': '发布时间',
+  'sys.plugin.market.description': '描述',
+  'sys.plugin.market.pluginInfo': '插件信息',
+  'sys.plugin.market.enable': '未启用插件市场功能',
+  'sys.plugin.market.enable.tips':
+    '请前往 [配置中心 -> 全局配置 -> Maven 配置] 中启用插件市场功能!!!',
+
   /**
    *
    * tenant

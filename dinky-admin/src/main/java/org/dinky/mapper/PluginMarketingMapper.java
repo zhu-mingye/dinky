@@ -17,16 +17,12 @@
  *
  */
 
-import { BaseState } from '@/types/Public/state';
-import { AlertRule, PluginMarketInfo } from '@/types/SettingCenter/data.d';
+package org.dinky.mapper;
 
-export interface AlertRuleListState extends BaseState {
-  value: Partial<AlertRule>;
-}
+import org.dinky.data.model.PluginMarketing;
+import org.dinky.mybatis.mapper.SuperMapper;
 
-export interface PluginMarketState extends BaseState {
-  value: Partial<AlertRule>;
-  pluginList: PluginMarketInfo[];
-  installed: boolean;
-  downloaded: boolean;
-}
+import org.apache.ibatis.annotations.Mapper;
+
+@Mapper
+public interface PluginMarketingMapper extends SuperMapper<PluginMarketing> {}

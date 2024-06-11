@@ -83,6 +83,7 @@ export default {
   'menu.settings.systemlog': 'System Log',
   'menu.settings.classloaderjars': 'ClassLoader Jars',
   'menu.settings.process': 'Process List',
+  'menu.settings.pluginmarket': 'Plugin Market',
   'menu.settings.services': 'Servers List',
   'menu.metrics': 'Metrics',
   'menu.about': 'About',
