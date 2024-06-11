@@ -19,9 +19,10 @@
 
 package org.dinky.service;
 
-import java.util.List;
 import org.dinky.data.model.PluginMarketing;
 import org.dinky.mybatis.service.ISuperService;
+
+import java.util.List;
 
 /** PluginMarketingService */
 public interface PluginMarketingService extends ISuperService<PluginMarketing> {

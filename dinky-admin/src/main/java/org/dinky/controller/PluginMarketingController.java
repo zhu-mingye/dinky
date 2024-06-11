@@ -19,8 +19,6 @@
 
 package org.dinky.controller;
 
-import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.dinky.data.constant.PermissionConstants;
 import org.dinky.data.enums.Status;
 import org.dinky.data.model.PluginMarketing;
@@ -28,11 +26,11 @@ import org.dinky.data.result.ProTableResult;
 import org.dinky.data.result.Result;
 import org.dinky.service.PluginMarketingService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,7 +43,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @Api(tags = "Plugin Marketing Controller")
@@ -73,7 +71,6 @@ public class PluginMarketingController {
         return pluginMarketService.selectForProTable(params);
     }
 
-
     @GetMapping("/query-all-version-by-plugin-id")
     @ApiOperation("Get Plugin List")
     @ApiImplicitParam(name = "params", value = "params", dataType = "JsonNode", paramType = "body", required = true)
@@ -81,8 +78,6 @@ public class PluginMarketingController {
         List<String> pluginMarketings = pluginMarketService.queryAllVersionByPluginId(id);
         return Result.succeed(pluginMarketings);
     }
-
-
 
     @PostMapping("/download")
     @ApiOperation("Download Plugin")

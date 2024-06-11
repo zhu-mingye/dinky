@@ -80,11 +80,10 @@ public class SystemConfiguration {
             .defaultValue(false)
             .note(Status.SYS_MAVEN_SETTINGS_ENABLE_PLUGIN_MARKET_NOTE);
 
-    private final Configuration<String> pluginMarketSearchUrl =
-            key(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_URL)
-                    .stringType()
-                    .defaultValue("https://search.maven.org/solrsearch/select")
-                    .note(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_URL_NOTE);
+    private final Configuration<String> pluginMarketSearchUrl = key(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_URL)
+            .stringType()
+            .defaultValue("https://search.maven.org/solrsearch/select")
+            .note(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_URL_NOTE);
 
     private final Configuration<String> pluginMarketSearchKeyWord =
             key(Status.SYS_MAVEN_SETTINGS_PLUGIN_MARKET_SEARCH_KEY_WORD)

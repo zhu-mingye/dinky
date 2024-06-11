@@ -37,7 +37,7 @@ export const InitPluginMarketState: PluginMarketState = {
   loading: false,
   installed: false,
   downloaded: false,
-  chooseVersion : false,
+  chooseVersion: false,
   chooseVersionValue: '',
   pluginList: [],
   versionList: [],

@@ -19,27 +19,6 @@
 
 package org.dinky.service.impl;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.StreamProgress;
-import cn.hutool.core.lang.Opt;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
-import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.dinky.data.exception.BusException;
 import org.dinky.data.model.PluginMarketing;
 import org.dinky.data.model.Resources;
@@ -53,9 +32,31 @@ import org.dinky.mybatis.service.impl.SuperServiceImpl;
 import org.dinky.resource.BaseResourceManager;
 import org.dinky.service.PluginMarketingService;
 import org.dinky.service.resource.ResourcesService;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.io.StreamProgress;
+import cn.hutool.core.lang.Opt;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -68,8 +69,7 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
 
     private final SystemConfiguration systemConfiguration = SystemConfiguration.getInstances();
 
-    private final ResourcesService   resourcesService;
-
+    private final ResourcesService resourcesService;
 
     /**
      * 同步插件市场列表
@@ -77,21 +77,35 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean syncPluginMarketData() {
-        //https://search.maven.org/solrsearch/select?q=g:org.apache.flink&core=gav&rows=200&wt=json
-        Integer searchCount = systemConfiguration.getPluginMarketSearchKeyWordOfNumbers().getValue();
+        // https://search.maven.org/solrsearch/select?q=g:org.apache.flink&core=gav&rows=200&wt=json
+        Integer searchCount =
+                systemConfiguration.getPluginMarketSearchKeyWordOfNumbers().getValue();
         String pluginMarketUrl = systemConfiguration.getPluginMarketSearchUrl().getValue();
 
-        String returnFl = "id,g,a,v,p,ec,timestamp,repositoryId,versionCount,text,latestVersion,description,downloadUrl";
+        String returnFl =
+                "id,g,a,v,p,ec,timestamp,repositoryId,versionCount,text,latestVersion,description,downloadUrl";
         // 由于单次 只能返回最高 200 条数据，所以需要分页查询,
         List<PluginMarketing> pluginMarketingListOfRemoteRepo = new ArrayList<>();
         if (searchCount > 200) {
             for (int i = 0; i < searchCount / 200 + 1; i++) {
                 int start = i * 200;
-                String pluginMarketSearchUrl = String.format("%s?q=g:%s+AND+p:jar&start=%d&rows=%d&wt=json&fl=%s", pluginMarketUrl, systemConfiguration.getPluginMarketSearchKeyWord().getValue(), start, 200 ,returnFl);
+                String pluginMarketSearchUrl = String.format(
+                        "%s?q=g:%s+AND+p:jar&start=%d&rows=%d&wt=json&fl=%s",
+                        pluginMarketUrl,
+                        systemConfiguration.getPluginMarketSearchKeyWord().getValue(),
+                        start,
+                        200,
+                        returnFl);
                 pluginMarketingListOfRemoteRepo.addAll(getPluginMarketingsList(pluginMarketSearchUrl));
             }
-        }else {
-            String pluginMarketSearchUrl = String.format("%s?q=g:%s+AND+p:jar&start==%d&rows=%d&wt=json&fl=%s", pluginMarketUrl, systemConfiguration.getPluginMarketSearchKeyWord().getValue(), 0, searchCount,returnFl);
+        } else {
+            String pluginMarketSearchUrl = String.format(
+                    "%s?q=g:%s+AND+p:jar&start==%d&rows=%d&wt=json&fl=%s",
+                    pluginMarketUrl,
+                    systemConfiguration.getPluginMarketSearchKeyWord().getValue(),
+                    0,
+                    searchCount,
+                    returnFl);
             pluginMarketingListOfRemoteRepo = getPluginMarketingsList(pluginMarketSearchUrl);
         }
 
@@ -106,27 +120,26 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         for (PluginMarketing pluginMarketing : pluginMarketingListOfRemoteRepo) {
             // 3.1.通过唯一索引对比(`name`,`plugin_id`,`repository_id`,`group_id`,`artifact_id`,`current_version`)，如果存在不操作，如果不存在则新增
 
-            boolean exist = pluginMarketingListInDataBase.stream()
-                    .anyMatch(plugin -> {
-                        boolean matchResult = plugin.getName().equals(pluginMarketing.getName())
-                                && plugin.getPluginId().equals(pluginMarketing.getPluginId())
-                                && plugin.getRepositoryId().equals(pluginMarketing.getRepositoryId())
-                                && plugin.getGroupId().equals(pluginMarketing.getGroupId())
-                                && plugin.getArtifactId().equals(pluginMarketing.getArtifactId())
-                                && plugin.getCurrentVersion().equals(pluginMarketing.getCurrentVersion());
-                        if (matchResult) {
-                            log.debug(
-                                    "The plugin {} has not been synchronized and the data does not exist. Please add a new one",
-                                    plugin.getName());
-                            newInsertCount.getAndIncrement();
-                        } else {
-                            log.debug(
-                                    "The plugin {} has been synchronized and the data already exists. Skipping",
-                                    plugin.getName());
-                            continueCount.getAndIncrement();
-                        }
-                        return matchResult;
-                    });
+            boolean exist = pluginMarketingListInDataBase.stream().anyMatch(plugin -> {
+                boolean matchResult = plugin.getName().equals(pluginMarketing.getName())
+                        && plugin.getPluginId().equals(pluginMarketing.getPluginId())
+                        && plugin.getRepositoryId().equals(pluginMarketing.getRepositoryId())
+                        && plugin.getGroupId().equals(pluginMarketing.getGroupId())
+                        && plugin.getArtifactId().equals(pluginMarketing.getArtifactId())
+                        && plugin.getCurrentVersion().equals(pluginMarketing.getCurrentVersion());
+                if (matchResult) {
+                    log.debug(
+                            "The plugin {} has not been synchronized and the data does not exist. Please add a new one",
+                            plugin.getName());
+                    newInsertCount.getAndIncrement();
+                } else {
+                    log.debug(
+                            "The plugin {} has been synchronized and the data already exists. Skipping",
+                            plugin.getName());
+                    continueCount.getAndIncrement();
+                }
+                return matchResult;
+            });
 
             if (!exist) {
                 needInsertPluginMarketingList.add(pluginMarketing);
@@ -166,7 +179,7 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
             // 转换插件列表为实体列表放入 list
             List<MavenDoc> mavenResultResponseDocs = mavenResultResponse.getDocs();
             for (MavenDoc mavenDoc : mavenResultResponseDocs) {
-                //过滤 packaging 只为 jar 的插件
+                // 过滤 packaging 只为 jar 的插件
                 if (!"jar".equals(mavenDoc.getP())) {
                     continue;
                 }
@@ -181,8 +194,11 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         pluginMarketing.setName(mavenDoc.getId());
         pluginMarketing.setPluginId(mavenDoc.getId());
 
-        String mavenDocLatestVersion = Opt.ofBlankAble(mavenDoc.getLatestVersion()).orElse(mavenDoc.getV());
-        String pluginDownloadUrl = "https://repo.maven.apache.org/maven2/" + mavenDoc.getG().replace(".", "/") + "/" + mavenDoc.getA() + "/" + mavenDocLatestVersion + "/" + mavenDoc.getA() + "-" + mavenDocLatestVersion + ".jar";
+        String mavenDocLatestVersion =
+                Opt.ofBlankAble(mavenDoc.getLatestVersion()).orElse(mavenDoc.getV());
+        String pluginDownloadUrl =
+                "https://repo.maven.apache.org/maven2/" + mavenDoc.getG().replace(".", "/") + "/" + mavenDoc.getA()
+                        + "/" + mavenDocLatestVersion + "/" + mavenDoc.getA() + "-" + mavenDocLatestVersion + ".jar";
         pluginMarketing.setPluginDownloadUrl(pluginDownloadUrl);
         pluginMarketing.setOrganization(mavenDoc.getG());
         pluginMarketing.setRepositoryId(mavenDoc.getRepositoryId());
@@ -219,7 +235,6 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         // todo: 1. 先从 classloader 中卸载
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
-
         if (plugin.getInstalled()) {
             boolean deleted = FileUtil.del(plugin.getPluginLocalStorageFullPath());
             if (!deleted) {
@@ -229,14 +244,18 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
             log.info("Plugin {} is not installed, skip this deletion operation", plugin.getName());
         }
 
-        String fullJarPath = plugin.getGroupId() +  FileUtil.FILE_SEPARATOR  + plugin.getArtifactId() + FileUtil.FILE_SEPARATOR  + plugin.getCurrentVersion() + FileUtil.FILE_SEPARATOR  + plugin.getArtifactId() + "-" + plugin.getCurrentVersion() + ".jar";
+        String fullJarPath = plugin.getGroupId() + FileUtil.FILE_SEPARATOR + plugin.getArtifactId()
+                + FileUtil.FILE_SEPARATOR + plugin.getCurrentVersion() + FileUtil.FILE_SEPARATOR
+                + plugin.getArtifactId() + "-" + plugin.getCurrentVersion() + ".jar";
 
         String resourcePath = "plugin-marketing" + FileUtil.FILE_SEPARATOR + fullJarPath;
         // 从 resource manager 中卸载
         BaseResourceManager resourceManager = BaseResourceManager.getInstance();
         resourceManager.remove(resourcePath);
 
-        resourcesService.getBaseMapper().delete(new LambdaQueryWrapper<Resources>().eq(Resources::getFullName, "/"+ resourcePath));
+        resourcesService
+                .getBaseMapper()
+                .delete(new LambdaQueryWrapper<Resources>().eq(Resources::getFullName, "/" + resourcePath));
 
         return removeById(id);
     }
@@ -276,7 +295,9 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
             }
         };
 
-        String fullJarPath = plugin.getGroupId() +  FileUtil.FILE_SEPARATOR  + plugin.getArtifactId() + FileUtil.FILE_SEPARATOR  + plugin.getCurrentVersion() + FileUtil.FILE_SEPARATOR  + plugin.getArtifactId() + "-" + plugin.getCurrentVersion() + ".jar";
+        String fullJarPath = plugin.getGroupId() + FileUtil.FILE_SEPARATOR + plugin.getArtifactId()
+                + FileUtil.FILE_SEPARATOR + plugin.getCurrentVersion() + FileUtil.FILE_SEPARATOR
+                + plugin.getArtifactId() + "-" + plugin.getCurrentVersion() + ".jar";
 
         String destFileNameFullPath = LOCAL_REPO_PATH + fullJarPath;
 
@@ -310,9 +331,10 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean installPlugin(PluginMarketing pluginMarketing) {
-        PluginMarketing dbMarketingInfo =  getById(pluginMarketing.getId());
+        PluginMarketing dbMarketingInfo = getById(pluginMarketing.getId());
         if (!pluginMarketing.getDownloaded()) {
-            throw new BusException("Plugin " + pluginMarketing.getName() + " is not downloaded. please download it of first");
+            throw new BusException(
+                    "Plugin " + pluginMarketing.getName() + " is not downloaded. please download it of first");
         }
         // todo: 1. 调用安装接口，安装插件,安装需要把插件的依赖下载下来，并加载到 classloader 中
         // 重新构建 下载地址
@@ -322,12 +344,11 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         boolean downloadedPlugin = downloadedPlugin(pluginMarketing);
         if (!downloadedPlugin) {
             throw new BusException("Plugin " + pluginMarketing.getName() + " download failed");
-        }else {
+        } else {
             log.info("Plugin {} download success, then install it", pluginMarketing.getName());
             pluginMarketing.setDownloaded(true);
         }
         // todo: 2. 安装成功后，标记为已安装
-
 
         pluginMarketing.setInstalled(true);
         return updateById(pluginMarketing);
@@ -342,8 +363,14 @@ public class PluginMarketingServiceImpl extends SuperServiceImpl<PluginMarketing
         PluginMarketing plugin = getById(pluginId);
         String pluginMarketUrl = systemConfiguration.getPluginMarketSearchUrl().getValue();
         // https://search.maven.org/solrsearch/select?q=g:org.apache.flink+AND+a:flink-annotations&core=gav&rows=20&wt=json
-        String pluginMarketSearchUrl = String.format("%s?q=g:%s+AND+p:jar+AND+a:%s&core=gav&rows=%d&wt=json", pluginMarketUrl, systemConfiguration.getPluginMarketSearchKeyWord().getValue(), plugin.getArtifactId() ,systemConfiguration.getPluginMarketSearchKeyWordOfNumbers().getValue());
-        return getPluginMarketingsList(pluginMarketSearchUrl).stream().map(PluginMarketing::getCurrentVersion).collect(Collectors.toList());
+        String pluginMarketSearchUrl = String.format(
+                "%s?q=g:%s+AND+p:jar+AND+a:%s&core=gav&rows=%d&wt=json",
+                pluginMarketUrl,
+                systemConfiguration.getPluginMarketSearchKeyWord().getValue(),
+                plugin.getArtifactId(),
+                systemConfiguration.getPluginMarketSearchKeyWordOfNumbers().getValue());
+        return getPluginMarketingsList(pluginMarketSearchUrl).stream()
+                .map(PluginMarketing::getCurrentVersion)
+                .collect(Collectors.toList());
     }
-
 }
