@@ -20,7 +20,7 @@
 import { DockLayout, TabData } from 'rc-dock';
 import React, { lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { PageContainer } from '@ant-design/pro-layout';
-import { Col, ConfigProvider, Row, Spin, theme, theme as antdTheme } from 'antd';
+import { Col, ConfigProvider, Row, Space, Spin, theme as antdTheme } from 'antd';
 import Toolbar from '@/pages/DataStudioNew/Toolbar';
 import { DataStudioActionType, RightContextMenuState } from '@/pages/DataStudioNew/data.d';
 import {
@@ -51,6 +51,10 @@ import './css/index.less';
 import { getTenantByLocalStorage } from '@/utils/function';
 import FooterContainer from '@/pages/DataStudioNew/FooterContainer';
 import { useToken } from 'antd/es/theme/internal';
+import { TAG_RIGHT_CONTEXT_MENU } from '@/pages/DataStudioNew/constants';
+import { ContextMenuSpace } from '@/pages/DataStudioNew/ContextMenuSpace';
+import { sleep } from '@antfu/utils';
+
 const SqlTask = lazy(() => import('@/pages/DataStudioNew/CenterTabContent/SqlTask'));
 const DataSourceDetail = lazy(
   () => import('@/pages/DataStudioNew/CenterTabContent/DataSourceDetail')
@@ -82,10 +86,19 @@ const DataStudioNew: React.FC = (props: any) => {
   const { drop } = useAliveController();
   const menuItem = useRightMenuItem({ dataStudioState });
 
-  // 右键弹出框状态
-  const [rightContextMenuState, setRightContextMenuState] = useState<RightContextMenuState>({
+  // 作业树右键弹出框状态
+  const [edgeAreaRightMenuState, setEdgeAreaRightMenuState] = useState<RightContextMenuState>({
     show: false,
     position: InitContextMenuPosition
+  });
+
+  // 标签右键弹出框状态
+  const [tagRightMenuState, setTagRightMenuState] = useState<
+    RightContextMenuState & { id?: string }
+  >({
+    show: false,
+    position: InitContextMenuPosition,
+    id: undefined
   });
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -208,11 +221,17 @@ const DataStudioNew: React.FC = (props: any) => {
   // 工具栏宽度
   const toolbarSize = dataStudioState.toolbar.showDesc ? 60 : 40;
 
-  //  右键菜单handle
-  const rightContextMenuHandle = (e: any) => handleRightClick(e, setRightContextMenuState);
-
-  const handleMenuClick = (values: MenuInfo) => {
-    setRightContextMenuState((prevState) => ({ ...prevState, show: false }));
+  /**
+   * 边缘区域调整布局右键点击事件 | edge area adjustment layout right-click events
+   * @param e
+   */
+  const edgeAreaRightMenuHandle = (e: any) => handleRightClick(e, setEdgeAreaRightMenuState);
+  /**
+   * 右键菜单的点击事件 | right-click menu click event of the right-click menu
+   * @param values
+   */
+  const handleEdgeAreaRightMenuClick = (values: MenuInfo) => {
+    setEdgeAreaRightMenuState((prevState) => ({ ...prevState, show: false }));
 
     switch (values.key) {
       case 'showToolbarDesc':
@@ -258,6 +277,52 @@ const DataStudioNew: React.FC = (props: any) => {
     }
   };
 
+  /**
+   * 标签右键菜单handle | the right-click menu handle of the tag
+   * @param e
+   */
+  const tagRightMenuHandle = (e: any) => handleRightClick(e, setTagRightMenuState);
+  /**
+   * 右键菜单的点击事件 | right-click menu click event of the right-click menu
+   * @param {MenuInfo} node
+   */
+  const handleTagRightMenuClick = (node: MenuInfo) => {
+    setTagRightMenuState((prevState) => ({ ...prevState, show: false }));
+    const { key } = node;
+    const current = dockLayoutRef.current;
+    const handleCloseOther = () => {
+      if (current) {
+        dataStudioState.centerContent.tabs.forEach((tab: CenterTab) => {
+          if (tab.id === tagRightMenuState.id) return;
+          const currentLayoutData = current.getLayout();
+          const source = Algorithm.find(currentLayoutData, tab.id) as TabData;
+          const layoutData = Algorithm.removeFromLayout(currentLayoutData, source);
+          current.changeLayout(layoutData, tab.id, 'remove', false);
+        });
+      }
+    };
+    switch (key) {
+      case 'closeAll':
+        if (current) {
+          // 先关闭其他，再睡眠50ms 关闭当前页，否则会导致布局混乱
+          handleCloseOther();
+          sleep(50).then(() => {
+            const currentLayoutData = current.getLayout();
+
+            const source = Algorithm.find(currentLayoutData, tagRightMenuState.id!!) as TabData;
+            const layoutData = Algorithm.removeFromLayout(currentLayoutData, source);
+            current.changeLayout(layoutData, tagRightMenuState.id!!, 'remove', false);
+          });
+        }
+        break;
+      case 'closeOther':
+        handleCloseOther();
+        break;
+      default:
+        break;
+    }
+  };
+
   const saveTab = (tabData: TabData & any) => {
     let { id, group, title } = tabData;
     return { id, group, title };
@@ -297,31 +362,41 @@ const DataStudioNew: React.FC = (props: any) => {
       }
 
       const getTitle = () => {
+        const rightMenuHandle = (e: React.MouseEvent<HTMLElement>) => {
+          setTagRightMenuState((prevState) => ({ ...prevState, id: id }));
+          tagRightMenuHandle(e);
+        };
         switch (tabData.tabType) {
           case 'task':
             const titleContent = (
-              <>
+              <ContextMenuSpace onContextMenu={rightMenuHandle}>
                 {getTabIcon(tabData.params.dialect, 19)} {tabData.title}
-              </>
+              </ContextMenuSpace>
             );
             if (tabData.isUpdate) {
               return (
-                <span style={{ color: '#52c41a' }}>
-                  {titleContent}
-                  {'  *'}
-                </span>
+                <ContextMenuSpace onContextMenu={rightMenuHandle}>
+                  <span style={{ color: '#52c41a' }}>
+                    {titleContent}
+                    {'  *'}
+                  </span>
+                </ContextMenuSpace>
               );
             }
-            return <span>{titleContent}</span>;
+            return (
+              <ContextMenuSpace onContextMenu={rightMenuHandle}>{titleContent}</ContextMenuSpace>
+            );
           case 'dataSource':
             const dialect = tabData.params.type;
             return (
-              <>
+              <ContextMenuSpace onContextMenu={rightMenuHandle}>
                 {getTabIcon(dialect, 19)} {tabData.title}
-              </>
+              </ContextMenuSpace>
             );
           default:
-            return <>{tabData.title}</>;
+            return (
+              <ContextMenuSpace onContextMenu={rightMenuHandle}>{tabData.title}</ContextMenuSpace>
+            );
         }
       };
 
@@ -454,7 +529,7 @@ const DataStudioNew: React.FC = (props: any) => {
                   height: 'inherit'
                 }}
                 flex='none'
-                onContextMenu={rightContextMenuHandle}
+                onContextMenu={edgeAreaRightMenuHandle}
               >
                 {/*左上工具栏*/}
                 <Col style={{ width: 'inherit', height: '50%' }}>
@@ -553,7 +628,7 @@ const DataStudioNew: React.FC = (props: any) => {
               <Col
                 style={{ width: toolbarSize, height: 'inherit' }}
                 flex='none'
-                onContextMenu={rightContextMenuHandle}
+                onContextMenu={edgeAreaRightMenuHandle}
               >
                 <Toolbar
                   height={toolbarSize}
@@ -568,15 +643,25 @@ const DataStudioNew: React.FC = (props: any) => {
 
             <FooterContainer token={token} />
 
-            {/*右键菜单*/}
+            {/* 边缘区域布局右键菜单*/}
             <RightContextMenu
-              contextMenuPosition={rightContextMenuState.position}
-              open={rightContextMenuState.show}
+              contextMenuPosition={edgeAreaRightMenuState.position}
+              open={edgeAreaRightMenuState.show}
               openChange={() =>
-                setRightContextMenuState((prevState) => ({ ...prevState, show: false }))
+                setEdgeAreaRightMenuState((prevState) => ({ ...prevState, show: false }))
               }
               items={menuItem}
-              onClick={handleMenuClick}
+              onClick={handleEdgeAreaRightMenuClick}
+            />
+            {/*标签的右键菜单*/}
+            <RightContextMenu
+              onClick={handleTagRightMenuClick}
+              items={TAG_RIGHT_CONTEXT_MENU}
+              contextMenuPosition={tagRightMenuState.position}
+              open={tagRightMenuState.show}
+              openChange={() =>
+                setTagRightMenuState((prevState) => ({ ...prevState, show: false }))
+              }
             />
           </Spin>
         </PageContainer>
