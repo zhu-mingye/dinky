@@ -17,33 +17,35 @@
  *
  */
 
-import React, { memo } from 'react';
-import { l } from '@/utils/intl';
+import React from 'react';
+import { DataSources } from '@/types/RegCenter/data';
+import { TagAlignLeft } from '@/components/StyledComponents';
+import { Tag } from 'antd';
 import { ProFormSelect } from '@ant-design/pro-components';
+import { l } from '@/utils/intl';
+import { TaskState, TempData } from '@/pages/DataStudioNew/type';
 
-import '../index.less';
-import { EnvType } from '@/pages/DataStudioNew/type';
-
-export const SelectFlinkEnv = memo((params: { flinkEnv: EnvType[] }) => {
-  const { flinkEnv } = params;
-  const options = [
-    { label: l('button.disable'), value: -1 },
-    ...flinkEnv.map((env) => ({
-      label: env.name,
-      value: env.id
-    }))
-  ];
+export default (props: { databaseDataList: TempData['dataSourceDataList']; data: TaskState }) => {
+  const dataSourceData: Record<string, React.ReactNode> = {};
+  const { databaseDataList, data } = props;
+  databaseDataList
+    .filter((x) => x.type.toLowerCase() === data?.dialect.toLowerCase())
+    .forEach((item: DataSources.DataSource) => {
+      dataSourceData[item.id] = item.name;
+    });
   return (
     <ProFormSelect
-      name='envId'
-      tooltip={l('pages.datastudio.label.jobConfig.flinksql.env.tip1')}
-      options={options}
-      rules={[{ required: true }]}
-      showSearch
+      // width={'sm'}
+      name={'databaseId'}
+      label={l('pages.datastudio.label.execConfig.selectDatabase')}
+      convertValue={(value) => String(value)}
+      valueEnum={dataSourceData}
+      placeholder='Please select a dataSource'
+      rules={[{ required: true, message: 'Please select your dataSource!' }]}
       allowClear={false}
       fieldProps={{
         popupMatchSelectWidth: false
       }}
     />
   );
-});
+};
