@@ -18,7 +18,7 @@
  */
 
 import { Flex, Row, Tooltip, Typography } from 'antd';
-import React, { useMemo } from 'react';
+import React from 'react';
 import './index.less';
 import { ToolbarPosition, ToolbarProp } from '@/pages/DataStudio/Toolbar/data.d';
 import { ToolbarRoutes } from '@/pages/DataStudio/Toolbar/ToolbarRoute';
@@ -81,8 +81,8 @@ export default React.memo((props: ToolbarProp) => {
             className += ' toolbar-icon-container-open';
           }
           return (
-            <div style={{ padding: '5px 5px 0' }}>
-              <Tooltip title={item.title()} placement={'right'} arrow={false} key={item.key}>
+            <Tooltip title={item.title()} placement={'right'} arrow={false} key={item.key}>
+              <div style={{ padding: '5px 5px 0' }}>
                 <Row
                   id={item.key}
                   className={className}
@@ -111,8 +111,8 @@ export default React.memo((props: ToolbarProp) => {
                     </Typography.Paragraph>
                   )}
                 </Row>
-              </Tooltip>
-            </div>
+              </div>
+            </Tooltip>
           );
         })}
       </ReactSortable>
