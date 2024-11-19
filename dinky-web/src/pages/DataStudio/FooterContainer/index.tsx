@@ -18,12 +18,11 @@
  */
 
 import { l } from '@/utils/intl';
-import { connect, useModel } from '@@/exports';
+import { useModel } from '@@/exports';
 import { Button, GlobalToken, Space } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { SseData, Topic } from '@/models/UseWebSocketModel';
-import { CenterTab, DataStudioState } from '@/pages/DataStudio/model';
-import { mapDispatchToProps } from '@/pages/DataStudio/DvaFunction';
+import { DataStudioState } from '@/pages/DataStudio/model';
 import { formatDate } from '@/pages/DataStudio/FooterContainer/function';
 
 type ButtonRoute = {
@@ -32,10 +31,7 @@ type ButtonRoute = {
   onClick?: () => void;
 };
 
-const FooterContainer = (props: {
-  token: GlobalToken;
-  centerContent?: DataStudioState['centerContent'];
-}) => {
+export default (props: { token: GlobalToken; centerContent: DataStudioState['centerContent'] }) => {
   const { token, centerContent } = props;
   const [memDetailInfo, setMemDetailInfo] = useState('0/0M');
   const { subscribeTopic } = useModel('UseWebSocketModel', (model: any) => ({
@@ -53,7 +49,6 @@ const FooterContainer = (props: {
       );
     });
   }, []);
-
   const route: ButtonRoute[] = [
     {
       text: (
@@ -98,9 +93,7 @@ const FooterContainer = (props: {
     ));
   };
   const renderFooterLastUpdate = () => {
-    const currentTab = centerContent?.tabs.find(
-      (item, index) => item.id === centerContent?.activeTab
-    );
+    const currentTab = centerContent?.tabs.find((item) => item.id === centerContent?.activeTab);
     if (currentTab && currentTab.tabType === 'task') {
       return (
         <div>
@@ -139,10 +132,3 @@ const FooterContainer = (props: {
     </>
   );
 };
-
-export default connect(
-  ({ DataStudio }: { DataStudio: DataStudioState }) => ({
-    centerContent: DataStudio.centerContent
-  }),
-  mapDispatchToProps
-)(FooterContainer);
