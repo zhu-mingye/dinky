@@ -132,7 +132,8 @@ public class Explainer {
                 jobStatementPlan.addJobStatement(statement, JobStatementType.DDL, operationType);
             }
         }
-        if (jobManager.getConfig().isMockSinkFunction()) {
+        if (!jobManager.isPlanMode() && jobManager.getConfig().isMockSinkFunction()) {
+            executor.setMockTest(true);
             MockStatementExplainer.build(executor.getCustomTableEnvironment()).jobStatementPlanMock(jobStatementPlan);
         }
         return jobStatementPlan;

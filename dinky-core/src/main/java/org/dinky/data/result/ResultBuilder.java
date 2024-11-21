@@ -58,8 +58,9 @@ public interface ResultBuilder {
             case DESCRIBE:
                 return new ShowResultBuilder(id);
             case INSERT:
+            case EXECUTE:
                 return isMockSinkFunction
-                        ? new MockResultBuilder(id, maxRowNum, isAutoCancel)
+                        ? new MockResultBuilder(id, maxRowNum, isChangeLog, isAutoCancel)
                         : new InsertResultBuilder();
             default:
                 return new DDLResultBuilder();

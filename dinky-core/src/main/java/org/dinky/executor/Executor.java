@@ -92,6 +92,9 @@ public abstract class Executor {
     // Dinky variable manager
     protected VariableManager variableManager = new VariableManager();
 
+    // mock test
+    protected boolean isMockTest = false;
+
     // return dinkyClassLoader
     public DinkyClassLoader getDinkyClassLoader() {
         return dinkyClassLoader;
@@ -137,6 +140,14 @@ public abstract class Executor {
         return getTableConfig().getLocalTimeZone().getId();
     }
 
+    public boolean isMockTest() {
+        return isMockTest;
+    }
+
+    public void setMockTest(boolean mockTest) {
+        isMockTest = mockTest;
+    }
+
     private void initClassloader(DinkyClassLoader classLoader) {
         if (classLoader != null) {
             try {
@@ -175,6 +186,8 @@ public abstract class Executor {
         if (executorConfig.isValidVariables()) {
             variableManager.registerVariable(executorConfig.getVariables());
         }
+
+        isMockTest = false;
     }
 
     abstract CustomTableEnvironment createCustomTableEnvironment(ClassLoader classLoader);
@@ -270,7 +283,7 @@ public abstract class Executor {
     }
 
     public StreamGraph getStreamGraph() {
-        return environment.getStreamGraph();
+        return environment.getStreamGraph(false);
     }
 
     public StreamGraph getStreamGraphFromCustomStatements(List<String> statements) {
@@ -278,17 +291,11 @@ public abstract class Executor {
         return getStreamGraph();
     }
 
-    public ObjectNode getStreamGraphFromDataStream(List<String> statements) {
-        statements.forEach(this::executeSql);
-        return getStreamGraphJsonNode(getStreamGraph());
-    }
-
-    public JobPlanInfo getJobPlanInfo(List<JobStatement> statements) {
+    public JobPlanInfo getJobPlanInfoFromStatements(List<JobStatement> statements) {
         return tableEnvironment.getJobPlanInfo(statements);
     }
 
-    public JobPlanInfo getJobPlanInfoFromDataStream(List<String> statements) {
-        statements.forEach(this::executeSql);
+    public JobPlanInfo getJobPlanInfo() {
         StreamGraph streamGraph = getStreamGraph();
         return new JobPlanInfo(JsonPlanGenerator.generatePlan(streamGraph.getJobGraph()));
     }
