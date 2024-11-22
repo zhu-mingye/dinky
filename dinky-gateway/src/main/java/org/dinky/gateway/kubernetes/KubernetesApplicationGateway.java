@@ -201,7 +201,7 @@ public class KubernetesApplicationGateway extends KubernetesGateway {
             KubernetesClient kubernetesClient, Deployment deployment, ClusterClientProvider<String> clusterClient)
             throws InterruptedException {
         KubernetesResult result = KubernetesResult.build(getType());
-        long waitSends = SystemConfiguration.getInstances().getJobIdWait() * 1000L;
+        long waitSends = SystemConfiguration.getInstances().GetJobIdWaitValue() * 1000L;
         long startTime = System.currentTimeMillis();
 
         while (System.currentTimeMillis() - startTime < waitSends) {
@@ -262,7 +262,7 @@ public class KubernetesApplicationGateway extends KubernetesGateway {
             KubernetesClient kubernetesClient, Deployment deployment, ClusterClientProvider<String> clusterClient)
             throws InterruptedException {
         KubernetesResult result = KubernetesResult.build(getType());
-        long waitSends = SystemConfiguration.getInstances().getJobIdWait() * 1000L;
+        long waitSends = SystemConfiguration.getInstances().GetJobIdWaitValue() * 1000L;
         long startTime = System.currentTimeMillis();
 
         while (System.currentTimeMillis() - startTime < waitSends) {

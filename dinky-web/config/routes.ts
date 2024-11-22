@@ -30,6 +30,12 @@
  */
 export default [
   {
+    path: '/welcom',
+    component: './Other/Welcom',
+    layout: false,
+    hideInMenu: true
+  },
+  {
     path: '/user',
     layout: false,
     routes: [

@@ -1088,10 +1088,10 @@ public class TaskServiceImpl extends SuperServiceImpl<TaskMapper, Task> implemen
     private Boolean hasTaskOperatePermission(Integer firstLevelOwner, List<Integer> secondLevelOwners) {
         boolean isFirstLevelOwner = firstLevelOwner != null && firstLevelOwner == StpUtil.getLoginIdAsInt();
         if (TaskOwnerLockStrategyEnum.OWNER.equals(
-                SystemConfiguration.getInstances().getTaskOwnerLockStrategy())) {
+                SystemConfiguration.getInstances().GetTaskOwnerLockStrategyValue())) {
             return isFirstLevelOwner;
         } else if (TaskOwnerLockStrategyEnum.OWNER_AND_MAINTAINER.equals(
-                SystemConfiguration.getInstances().getTaskOwnerLockStrategy())) {
+                SystemConfiguration.getInstances().GetTaskOwnerLockStrategyValue())) {
             return isFirstLevelOwner
                     || (secondLevelOwners != null && secondLevelOwners.contains(StpUtil.getLoginIdAsInt()));
         }
