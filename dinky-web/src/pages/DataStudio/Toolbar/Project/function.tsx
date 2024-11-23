@@ -232,7 +232,7 @@ export const buildProjectTree = (
   currentUser: UserBaseInfo.User,
   taskOwnerLockingStrategy: TaskOwnerLockingStrategy,
   users: UserBaseInfo.User[] = [],
-  currentRunningTaskIds: number[] = [],
+  currentRunningTaskIds: number[] = []
 ): any =>
   data
     ? data.map((item: Catalogue) => {
@@ -256,7 +256,9 @@ export const buildProjectTree = (
         // 渲染后缀图标
         const renderSuffixIcon = (
           <>
-            {currentRunningTaskIds.includes(item.taskId)?<FireTwoTone twoToneColor="#ff0000"/>:undefined}
+            {currentRunningTaskIds.includes(item.taskId) ? (
+              <FireTwoTone twoToneColor='#ff0000' />
+            ) : undefined}
             {lockTask(
               item?.task?.firstLevelOwner,
               item?.task?.secondLevelOwners,

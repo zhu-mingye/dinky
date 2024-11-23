@@ -54,7 +54,7 @@ import { buildProjectTree } from '@/pages/DataStudio/Toolbar/Project/function';
 import { showFirstLevelOwner, showSecondLevelOwners } from '@/pages/DataStudio/function';
 import { generateList, getLeafKeyList, searchInTree } from '@/utils/treeUtils';
 import { mapDispatchToProps } from '@/pages/DataStudio/DvaFunction';
-import {SseData, Topic} from "@/models/UseWebSocketModel";
+import { SseData, Topic } from '@/models/UseWebSocketModel';
 
 const { DirectoryTree } = Tree;
 

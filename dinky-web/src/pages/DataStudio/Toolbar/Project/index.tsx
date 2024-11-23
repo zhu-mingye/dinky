@@ -44,7 +44,7 @@ import { useRightContext } from '@/pages/DataStudio/Toolbar/Project/RightContext
 import { TreeVo } from '@/pages/DataStudio/type';
 import FolderModal from '@/pages/DataStudio/Toolbar/Project/FolderModal';
 import { getTaskSortTypeData } from '@/pages/DataStudio/service';
-import {SseData, Topic} from "@/models/UseWebSocketModel";
+import { SseData, Topic } from '@/models/UseWebSocketModel';
 
 export const Project = (props: any) => {
   const {
