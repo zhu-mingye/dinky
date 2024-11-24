@@ -24,11 +24,11 @@ const FinishPage = () => {
   return (
     <Result
       status='success'
-      title={l('welcom.finish.title')}
-      subTitle={l('welcom.finish')}
+      title={l('welcome.finish.title')}
+      subTitle={l('welcome.finish')}
       extra={[
         <Button type='primary' onClick={() => (window.location.href = '/login')}>
-          {l('welcom.goLogin')}
+          {l('welcome.goLogin')}
         </Button>
       ]}
     />

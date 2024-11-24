@@ -78,7 +78,7 @@ import CodeEdit from '@/components/CustomEditor/CodeEdit';
 import DiffModal from '@/pages/DataStudio/CenterTabContent/SqlTask/DiffModal';
 import TaskConfig from '@/pages/DataStudio/CenterTabContent/SqlTask/TaskConfig';
 import SelectDb from '@/pages/DataStudio/CenterTabContent/RunToolbar/SelectDb';
-import {SseData, Topic} from "@/models/UseWebSocketModel";
+import { SseData, Topic } from '@/models/UseWebSocketModel';
 
 export type FlinkSqlProps = {
   showDesc: boolean;
@@ -388,7 +388,7 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
   const handleSubmit = useCallback(async () => {
     setIsSubmitting(true);
     try {
-      if(currentState.step !== JOB_LIFE_CYCLE.PUBLISH){
+      if (currentState.step !== JOB_LIFE_CYCLE.PUBLISH) {
         await handleSave();
       }
       updateAction({
@@ -677,8 +677,7 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
             />
             <RunToolBarButton
               isShow={
-                !isRunning &&
-                assert(currentState.dialect, [DIALECT.FLINK_SQL], true, 'includes')
+                !isRunning && assert(currentState.dialect, [DIALECT.FLINK_SQL], true, 'includes')
               }
               showDesc={showDesc}
               disabled={isLockTask || isSubmitting}
@@ -699,7 +698,7 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
               showDesc={showDesc}
               color={'red'}
               desc={l('pages.datastudio.editor.stop')}
-              icon={<XFilled style={{color:'#b10404'}}/>}
+              icon={<XFilled style={{ color: '#b10404' }} />}
               onClick={handleStop}
               hotKey={{
                 ...hotKeyConfig,

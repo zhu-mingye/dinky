@@ -56,7 +56,7 @@ import { assert } from '@/pages/DataStudio/utils';
 import { connect } from '@umijs/max';
 import { Lineage } from '@/pages/DataStudio/Toolbar/Service/Lineage';
 import { useModel } from '@umijs/max';
-import {SseData, Topic} from "@/models/UseWebSocketModel";
+import { SseData, Topic } from '@/models/UseWebSocketModel';
 
 const Service = (props: { showDesc: boolean; tabs: CenterTab[]; action: any }) => {
   const {
@@ -207,10 +207,14 @@ const Service = (props: { showDesc: boolean; tabs: CenterTab[]; action: any }) =
                 ) as TreeDataNode;
               }
               currentDialectTree.children!!.push({
-                title: (<Space align={'baseline'} size={'small'}>
-                  {tab.title}
-                  {currentRunningTaskIds.includes(tab.params.taskId)?<FireTwoTone twoToneColor="#ff0000"/>:undefined}
-                </Space>),
+                title: (
+                  <Space align={'baseline'} size={'small'}>
+                    {tab.title}
+                    {currentRunningTaskIds.includes(tab.params.taskId) ? (
+                      <FireTwoTone twoToneColor='#ff0000' />
+                    ) : undefined}
+                  </Space>
+                ),
                 key: tab.params.taskId,
                 icon: icon,
                 isLeaf: true
@@ -224,7 +228,7 @@ const Service = (props: { showDesc: boolean; tabs: CenterTab[]; action: any }) =
     expandKeys.length == 0 && setExpandKeys(getAllNodeKeys(newTreeData));
   }, [tabs, currentRunningTaskIds]);
 
-  const renderContent =  useMemo(() => {
+  const renderContent = useMemo(() => {
     if (selectedKey.length === 1) {
       const taskId = selectedKey[0] as number;
       const taskParams = tabs.find((tab) => tab.params.taskId === taskId)?.params;
@@ -260,7 +264,7 @@ const Service = (props: { showDesc: boolean; tabs: CenterTab[]; action: any }) =
           key: 'history',
           label: l('menu.datastudio.history'),
           icon: <HistoryOutlined />,
-          children: <ExecutionHistory taskId={taskId} dialect={taskParams?.dialect}/>
+          children: <ExecutionHistory taskId={taskId} dialect={taskParams?.dialect} />
         });
       }
       if (assert(taskParams?.dialect, [DIALECT.FLINK_SQL], true, 'includes')) {
@@ -288,7 +292,7 @@ const Service = (props: { showDesc: boolean; tabs: CenterTab[]; action: any }) =
         />
       );
     }
-  },[tabs, selectedKey, props.action, tabActiveKey]);
+  }, [tabs, selectedKey, props.action, tabActiveKey]);
   return (
     <PanelGroup direction={'horizontal'}>
       <Panel defaultSize={20} style={{ display: 'flex', flexDirection: 'column', padding: 10 }}>

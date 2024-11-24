@@ -19,34 +19,34 @@
 
 import { Button, Flex, Input, Radio, Space, Typography } from 'antd';
 
-import { WelcomPic1 } from '@/components/Icons/WelcomIcons';
+import { WelcomePic1 } from '@/components/Icons/WelcomeIcons';
 import FormItem from 'antd/es/form/FormItem';
-import { WelcomProps } from '@/pages/Other/Welcom';
+import { WelcomeProps } from 'src/pages/Other/Welcome';
 import { l } from '@/utils/intl';
 
 const { Title, Text, Link } = Typography;
 
-const BaseConfigItem = (prop: WelcomProps) => {
+const BaseConfigItem = (prop: WelcomeProps) => {
   return (
     <Flex>
       <div>
         <Space>
-          <Title>{l('welcom.base.config.title')}</Title>
+          <Title>{l('welcome.base.config.title')}</Title>
         </Space>
         <br />
-        <Text type={'success'}>{l('welcom.tips')}</Text>
+        <Text type={'success'}>{l('welcome.tips')}</Text>
         <br />
         <br />
 
-        <FormItem label={l('welcom.base.config.dinky.url.title')}>
-          <Text type={'danger'}>{l('welcom.base.config.dinky.url')}</Text>
+        <FormItem label={l('welcome.base.config.dinky.url.title')}>
+          <Text type={'danger'}>{l('welcome.base.config.dinky.url')}</Text>
           <FormItem name='sys.env.settings.dinkyAddr'>
             <Input />
           </FormItem>
         </FormItem>
 
-        <FormItem label={l('welcom.base.config.taskowner.title')}>
-          <Text type={'secondary'}>{l('welcom.base.config.taskowner')}</Text>
+        <FormItem label={l('welcome.base.config.taskowner.title')}>
+          <Text type={'secondary'}>{l('welcome.base.config.taskowner')}</Text>
           <br />
           <FormItem name='sys.env.settings.taskOwnerLockStrategy'>
             <Radio.Group>
@@ -57,11 +57,11 @@ const BaseConfigItem = (prop: WelcomProps) => {
           </FormItem>
         </FormItem>
         <Button type={'primary'} size={'large'} onClick={prop.onNext}>
-          {l('welcom.next')}
+          {l('welcome.next')}
         </Button>
-        <Link onClick={prop.onPrev}> {l('welcom.prev')}</Link>
+        <Link onClick={prop.onPrev}> {l('welcome.prev')}</Link>
       </div>
-      <WelcomPic1 size={500} />
+      <WelcomePic1 size={500} />
     </Flex>
   );
 };
