@@ -52,6 +52,7 @@ import { useToken } from 'antd/es/theme/internal';
 import { TAG_RIGHT_CONTEXT_MENU } from '@/pages/DataStudio/constants';
 import { ContextMenuSpace } from '@/pages/DataStudio/ContextMenuSpace';
 import { sleep } from '@antfu/utils';
+import { SysConfigStateType } from '@/pages/SettingCenter/GlobalSetting/model';
 
 const SqlTask = lazy(() => import('@/pages/DataStudio/CenterTabContent/SqlTask'));
 const DataSourceDetail = lazy(() => import('@/pages/DataStudio/CenterTabContent/DataSourceDetail'));
@@ -60,6 +61,7 @@ let didMount = false;
 const DataStudio: React.FC = (props: any) => {
   const {
     dataStudioState,
+    enableResource,
     handleToolbarShowDesc,
     handleThemeCompact,
     saveToolbarLayout,
@@ -76,7 +78,8 @@ const DataStudio: React.FC = (props: any) => {
     querySuggestions,
     queryUserData,
     queryDsConfig,
-    queryTaskOwnerLockingStrategy
+    queryTaskOwnerLockingStrategy,
+    queryResource
   } = props;
   const [_, token] = useToken();
 
@@ -137,6 +140,9 @@ const DataStudio: React.FC = (props: any) => {
     await queryUserData({ id: getTenantByLocalStorage() });
     await queryDsConfig();
     await queryTaskOwnerLockingStrategy();
+    if (enableResource) {
+      await queryResource();
+    }
   }, []);
   useEffect(() => {
     const { actionType, params } = dataStudioState.action;
@@ -673,8 +679,9 @@ const DataStudio: React.FC = (props: any) => {
 };
 
 export default connect(
-  ({ DataStudio }: { DataStudio: DataStudioState }) => ({
-    dataStudioState: DataStudio
+  ({ DataStudio, SysConfig }: { DataStudio: DataStudioState; SysConfig: SysConfigStateType }) => ({
+    dataStudioState: DataStudio,
+    enableResource: SysConfig.enableResource
   }),
   mapDispatchToProps
 )(DataStudio);
