@@ -17,27 +17,21 @@
  *
  */
 
-import globalHeader from './zh-CN/global';
-import menu from './zh-CN/menu';
-import pages from './zh-CN/pages';
-import pwa from './zh-CN/pwa';
-import request from './zh-CN/request';
-import response from './zh-CN/response';
-import shortcutKey from './zh-CN/shortcutKey';
-import welcome from '@/locales/zh-CN/welcome';
+import { Button, Result } from 'antd';
+import { l } from '@/utils/intl';
 
-export default {
-  'navBar.lang': '语言',
-  'layout.user.link.help': '帮助',
-  'layout.user.link.privacy': '隐私',
-  'layout.user.link.terms': '条款',
-  'app.copyright.produced': 'Produced by Dinky Community',
-  ...globalHeader,
-  ...pages,
-  ...menu,
-  ...pwa,
-  ...request,
-  ...response,
-  ...shortcutKey,
-  ...welcome
+const FinishPage = () => {
+  return (
+    <Result
+      status='success'
+      title={l('welcome.finish.title')}
+      subTitle={l('welcome.finish')}
+      extra={[
+        <Button type='primary' onClick={() => (window.location.href = '/login')}>
+          {l('welcome.goLogin')}
+        </Button>
+      ]}
+    />
+  );
 };
+export default FinishPage;

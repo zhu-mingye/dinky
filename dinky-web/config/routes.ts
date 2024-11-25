@@ -30,8 +30,8 @@
  */
 export default [
   {
-    path: '/welcom',
-    component: './Other/Welcom',
+    path: '/welcome',
+    component: './Other/Welcome',
     layout: false,
     hideInMenu: true
   },

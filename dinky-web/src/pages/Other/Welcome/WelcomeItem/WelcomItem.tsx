@@ -18,28 +18,28 @@
  */
 
 import { Button, Flex, Input, Space, Typography } from 'antd';
-import { Congratulations, WelcomPic1 } from '@/components/Icons/WelcomIcons';
+import { Congratulations, WelcomePic1 } from '@/components/Icons/WelcomeIcons';
 import FormItem from 'antd/es/form/FormItem';
-import { WelcomProps } from '@/pages/Other/Welcom';
+import { WelcomeProps } from 'src/pages/Other/Welcome';
 import { l } from '@/utils/intl';
 
 const { Title, Text, Link } = Typography;
 
-const WelcomItem = (prop: WelcomProps) => {
+const WelcomeItem = (prop: WelcomeProps) => {
   return (
     <Flex>
       <div>
         <Space>
           <Congratulations size={60} />
-          <Title>{l('welcom.welcom')}</Title>
+          <Title>{l('welcome.welcome')}</Title>
         </Space>
         <br />
-        <Text type={'secondary'}>{l('welcom.welcom.content')}</Text>
+        <Text type={'secondary'}>{l('welcome.welcome.content')}</Text>
         <br />
         <br />
-        <Text>{l('welcom.welcom.content.tip1')}</Text>
+        <Text>{l('welcome.welcome.content.tip1')}</Text>
         <br />
-        <Text>{l('welcom.welcom.content.tip2')}</Text>
+        <Text>{l('welcome.welcome.content.tip2')}</Text>
         <Flex
           style={{ width: '80%', height: '80%' }}
           justify={'center'}
@@ -47,20 +47,20 @@ const WelcomItem = (prop: WelcomProps) => {
           gap={'middle'}
           vertical
         >
-          <Title level={4}>{l('welcom.welcom.setPwd.tip')}</Title>
+          <Title level={4}>{l('welcome.welcome.setPwd.tip')}</Title>
 
           <FormItem name='password' style={{ width: '100%', margin: '0px' }}>
             <Input placeholder='password' type={'password'} size={'large'} />
           </FormItem>
 
           <Button type={'primary'} style={{ width: '100%' }} size={'large'} onClick={prop.onNext}>
-            {l('welcom.welcom.setPwd')}
+            {l('welcome.welcome.setPwd')}
           </Button>
-          <Link onClick={() => prop.onNext()}>{l('welcom.welcom.skip')}</Link>
+          <Link onClick={() => prop.onNext()}>{l('welcome.welcome.skip')}</Link>
         </Flex>
       </div>
-      <WelcomPic1 size={500} />
+      <WelcomePic1 size={500} />
     </Flex>
   );
 };
-export default WelcomItem;
+export default WelcomeItem;

@@ -19,10 +19,10 @@
 
 import { Flex, Form } from 'antd';
 import { useState } from 'react';
-import WelcomItem from '@/pages/Other/Welcom/WelcomItem/WelcomItem';
-import BaseConfigItem from '@/pages/Other/Welcom/WelcomItem/BaseConfigItem';
-import FlinkConfigItem from '@/pages/Other/Welcom/WelcomItem/FlinkConfigItem';
-import FinishPage from '@/pages/Other/Welcom/WelcomItem/FinishPage';
+import WelcomeItem from '@/pages/Other/Welcome/WelcomeItem/WelcomItem';
+import BaseConfigItem from '@/pages/Other/Welcome/WelcomeItem/BaseConfigItem';
+import FlinkConfigItem from '@/pages/Other/Welcome/WelcomeItem/FlinkConfigItem';
+import FinishPage from '@/pages/Other/Welcome/WelcomeItem/FinishPage';
 import { log } from '@antv/g6/lib/utils/scale';
 import { history, useRequest } from '@@/exports';
 import { API_CONSTANTS } from '@/services/endpoints';
@@ -36,13 +36,13 @@ const boxStyle: React.CSSProperties = {
   borderRadius: 6
 };
 
-export type WelcomProps = {
+export type WelcomeProps = {
   onNext: () => void;
   onPrev: () => void;
   onSubmit?: () => void;
 };
 
-const Welcom = () => {
+const Welcome = () => {
   const [form] = Form.useForm();
   const [formData, setFormData] = useState({});
   const [current, setCurrent] = useState(0);
@@ -76,7 +76,7 @@ const Welcom = () => {
           <div>loading</div>
         ) : (
           <Form form={form} initialValues={data} layout='vertical'>
-            {current == 0 && <WelcomItem onNext={next} onPrev={prev} />}
+            {current == 0 && <WelcomeItem onNext={next} onPrev={prev} />}
             {current == 1 && <BaseConfigItem onNext={next} onPrev={prev} />}
             {current == 2 && <FlinkConfigItem onNext={next} onPrev={prev} onSubmit={submit} />}
             {current == 3 && <FinishPage />}
@@ -87,4 +87,4 @@ const Welcom = () => {
   );
 };
 
-export default Welcom;
+export default Welcome;

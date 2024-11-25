@@ -184,7 +184,7 @@ export const Magic = (props: { size?: number }) => {
   );
 };
 
-export const WelcomPic1 = (props: { size?: number }) => {
+export const WelcomePic1 = (props: { size?: number }) => {
   const size = props.size || defaultSvgSize;
   return (
     <>

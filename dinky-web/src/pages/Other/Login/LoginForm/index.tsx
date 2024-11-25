@@ -46,7 +46,7 @@ const LoginForm: React.FC<LoginFormProps> = (props) => {
   useRequest(API_CONSTANTS.GET_NEEDED_CFG, {
     onSuccess: (res) => {
       if (res[GLOBAL_SETTING_KEYS.SYS_GLOBAL_ISFIRST]) {
-        history.push('/welcom');
+        history.push('/welcome');
       }
       setLdapEnabled(res[GLOBAL_SETTING_KEYS.SYS_LDAP_SETTINGS_ENABLE]);
       form.setFieldValue('ldapLogin', res[GLOBAL_SETTING_KEYS.SYS_LDAP_SETTINGS_ENABLE]);

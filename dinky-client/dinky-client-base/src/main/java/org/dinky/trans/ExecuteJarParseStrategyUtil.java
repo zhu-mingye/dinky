@@ -17,21 +17,15 @@
  *
  */
 
-import { Button, Result } from 'antd';
-import { l } from '@/utils/intl';
+package org.dinky.trans;
 
-const FinishPage = () => {
-  return (
-    <Result
-      status='success'
-      title={l('welcom.finish.title')}
-      subTitle={l('welcom.finish')}
-      extra={[
-        <Button type='primary' onClick={() => (window.location.href = '/login')}>
-          {l('welcom.goLogin')}
-        </Button>
-      ]}
-    />
-  );
-};
-export default FinishPage;
+import org.dinky.trans.parse.ExecuteJarParseStrategy;
+
+import cn.hutool.core.lang.Singleton;
+
+public class ExecuteJarParseStrategyUtil {
+
+    public static boolean match(String statement) {
+        return Singleton.get(ExecuteJarParseStrategy.class).match(statement);
+    }
+}
