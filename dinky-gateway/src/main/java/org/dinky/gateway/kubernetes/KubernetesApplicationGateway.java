@@ -363,11 +363,14 @@ public class KubernetesApplicationGateway extends KubernetesGateway {
      * @return ingress domain
      */
     private String checkUseIngress() {
-        Map<String, String> ingressConfig = k8sConfig.getIngressConfig();
+        Map<String, Object> ingressConfig = k8sConfig.getIngressConfig();
         if (MapUtils.isNotEmpty(ingressConfig)) {
-            boolean ingressEnable =
-                    Boolean.parseBoolean(ingressConfig.getOrDefault(DINKY_K8S_INGRESS_ENABLED_KEY, "false"));
-            String ingressDomain = ingressConfig.getOrDefault(DINKY_K8S_INGRESS_DOMAIN_KEY, StringUtils.EMPTY);
+            boolean ingressEnable = Boolean.parseBoolean(ingressConfig
+                    .getOrDefault(DINKY_K8S_INGRESS_ENABLED_KEY, "false")
+                    .toString());
+            String ingressDomain = ingressConfig
+                    .getOrDefault(DINKY_K8S_INGRESS_DOMAIN_KEY, StringUtils.EMPTY)
+                    .toString();
             if (ingressEnable && StringUtils.isNotEmpty(ingressDomain)) {
                 return ingressDomain;
             }
