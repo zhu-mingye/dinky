@@ -22,7 +22,6 @@ package org.dinky.flink.catalog;
 import static org.apache.flink.util.Preconditions.checkArgument;
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
-import lombok.Getter;
 import org.dinky.flink.catalog.factory.DinkyMysqlCatalogFactoryOptions;
 
 import org.apache.flink.table.api.Schema;
@@ -73,6 +72,8 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import lombok.Getter;
 
 /**
  * DinkyMysqlCatalog is a catalog implementation for MySQL.
@@ -260,7 +261,8 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
 
     @Override
     public CatalogDatabase getDatabase(String databaseName) throws DatabaseNotExistException, CatalogException {
-        String querySql = "SELECT id, database_name,description FROM metadata_database where database_name=? and is_delete = 0";
+        String querySql =
+                "SELECT id, database_name,description FROM metadata_database where database_name=? and is_delete = 0";
         Connection conn = getConnection();
         try (PreparedStatement ps = conn.prepareStatement(querySql)) {
             ps.setString(1, databaseName);
@@ -272,7 +274,8 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
 
                 Map<String, String> map = new HashMap<>();
 
-                String sql = "select `key`,`value` from metadata_database_property where database_id=? and is_delete = 0";
+                String sql =
+                        "select `key`,`value` from metadata_database_property where database_id=? and is_delete = 0";
                 try (PreparedStatement pStat = conn.prepareStatement(sql)) {
                     pStat.setInt(1, id);
                     ResultSet prs = pStat.executeQuery();
@@ -482,7 +485,8 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
 
         // get all schemas
         // 要给出table 或 view
-        String querySql = "SELECT table_name FROM metadata_table where table_type=? and database_id = ? and is_delete = 0";
+        String querySql =
+                "SELECT table_name FROM metadata_table where table_type=? and database_id = ? and is_delete = 0";
         Connection conn = getConnection();
         try (PreparedStatement ps = conn.prepareStatement(querySql)) {
             ps.setString(1, tableType);
@@ -528,7 +532,8 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
             }
             if (tableType.equals(ObjectType.TABLE)) {
                 // 这个是 table
-                String propSql = "SELECT `key`, `value` from metadata_table_property WHERE table_id=?  and is_delete = 0";
+                String propSql =
+                        "SELECT `key`, `value` from metadata_table_property WHERE table_id=?  and is_delete = 0";
                 PreparedStatement pState = conn.prepareStatement(propSql);
                 pState.setInt(1, id);
                 ResultSet prs = pState.executeQuery();
@@ -643,7 +648,7 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
             dStat.setInt(1, id);
             dStat.executeUpdate();
             dStat.close();
-//            String deleteDbSql = "delete from metadata_table " + " where id=?";
+            //            String deleteDbSql = "delete from metadata_table " + " where id=?";
             String deleteDbSql = "update metadata_table set is_delete=1 where id=?";
             dStat = conn.prepareStatement(deleteDbSql);
             dStat.setInt(1, id);
@@ -694,12 +699,14 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
             }
             return;
         }
-        //Insert table
-        //Insert into the table table. Here, it could be a table or a view
-        //If it is a table, we think it is a resolved table, so we can use the properties method to serialize and save it.
-        //If it is a view, we think it can only have physical fields
+        // Insert table
+        // Insert into the table table. Here, it could be a table or a view
+        // If it is a table, we think it is a resolved table, so we can use the properties method to serialize and save
+        // it.
+        // If it is a view, we think it can only have physical fields
         if (!(table instanceof ResolvedCatalogBaseTable)) {
-            throw new UnsupportedOperationException("Entering tables of non-ResolvedCatalogBaseTable types is temporarily not supported");
+            throw new UnsupportedOperationException(
+                    "Entering tables of non-ResolvedCatalogBaseTable types is temporarily not supported");
         }
         Connection conn = getConnection();
         try {
@@ -730,8 +737,7 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
             if (table instanceof ResolvedCatalogTable) {
                 // table 就可以直接拿properties了。
                 Map<String, String> props = ((ResolvedCatalogTable) table).toProperties();
-                String propInsertSql =
-                        "insert into metadata_table_property(table_id, `key`,`value`) values (?,?,?)";
+                String propInsertSql = "insert into metadata_table_property(table_id, `key`,`value`) values (?,?,?)";
                 PreparedStatement pStat = conn.prepareStatement(propInsertSql);
                 for (Map.Entry<String, String> entry : props.entrySet()) {
                     pStat.setInt(1, id);
@@ -778,7 +784,8 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
                             colIStat.setObject(7, null); // view没有主键
                             colIStat.addBatch();
                         } else {
-                            throw new UnsupportedOperationException("Temporarily, it is believed that non-physical fields will not appear in view");
+                            throw new UnsupportedOperationException(
+                                    "Temporarily, it is believed that non-physical fields will not appear in view");
                         }
                     }
                     colIStat.executeBatch();
@@ -1032,7 +1039,8 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
         }
 
         Connection conn = getConnection();
-        String insertSql = "update metadata_function set (class_name =?, function_language=?) " + " where id=? and is_delete = 0";
+        String insertSql =
+                "update metadata_function set (class_name =?, function_language=?) " + " where id=? and is_delete = 0";
         try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
             ps.setString(1, newFunction.getClassName());
             ps.setString(2, newFunction.getFunctionLanguage().toString());
@@ -1056,7 +1064,7 @@ public class DinkyMysqlCatalog extends AbstractCatalog {
         }
 
         Connection conn = getConnection();
-//        String insertSql = "delete from metadata_function " + " where id=?";
+        //        String insertSql = "delete from metadata_function " + " where id=?";
         String insertSql = "update metadata_function set is_delete = 1 where id=?";
         try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
             ps.setInt(1, id);
