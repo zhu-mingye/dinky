@@ -59,7 +59,6 @@ SELECT add_column_if_not_exists('public','dinky_alert_rules', 'is_delete', 'BOOL
 
 SELECT add_column_if_not_exists('public','dinky_alert_template', 'is_delete', 'BOOLEAN', 'FALSE', 'is delete ');
 
--- 删除 is_deleted 字段
 ALTER TABLE public.dinky_alert_history DROP COLUMN IF EXISTS is_deleted;
 SELECT add_column_if_not_exists('public','dinky_sys_login_log', 'is_delete', 'BOOLEAN', 'FALSE', 'is delete ');
 
