@@ -19,7 +19,6 @@
 
 package org.dinky.data.model;
 
-import lombok.EqualsAndHashCode;
 import org.dinky.mybatis.model.DateBaseEntity;
 
 import java.io.Serializable;
@@ -37,6 +36,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

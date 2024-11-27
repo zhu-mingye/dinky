@@ -52,5 +52,4 @@ public class Tenant extends DateBaseEntity<Tenant> implements Serializable {
     /** note */
     @ApiModelProperty(value = "Tenant Note", required = true, dataType = "String", example = "Default")
     private String note;
-
 }
