@@ -19,6 +19,7 @@
 
 package org.dinky.data.model;
 
+import lombok.EqualsAndHashCode;
 import org.dinky.mybatis.model.DateBaseEntity;
 
 import java.io.Serializable;
@@ -39,6 +40,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

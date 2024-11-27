@@ -53,7 +53,4 @@ public class Tenant extends DateBaseEntity<Tenant> implements Serializable {
     @ApiModelProperty(value = "Tenant Note", required = true, dataType = "String", example = "Default")
     private String note;
 
-    /** is delete */
-    @ApiModelProperty(value = "Is Delete", required = true, dataType = "Boolean", example = "false")
-    private Boolean isDelete;
 }
