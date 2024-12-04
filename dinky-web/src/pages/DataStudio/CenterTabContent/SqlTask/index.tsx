@@ -191,10 +191,10 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
       if (taskDetail.dialect.toLowerCase() === DIALECT.FLINKJAR) {
         const sqlConvertForm = await flinkJarSqlConvertForm(taskDetail.statement);
         setSqlForm({ enable: true, ...sqlConvertForm });
-        setCurrentState((prevState) => ({
-          ...prevState,
+        setCurrentState({
+          ...newParams,
           statement: sqlConvertForm?.initSqlStatement ?? ''
-        }));
+        });
         setOriginStatementValue(sqlConvertForm?.initSqlStatement ?? '');
         if (params?.statement && params?.statement !== sqlConvertForm?.initSqlStatement) {
           setDiff([
