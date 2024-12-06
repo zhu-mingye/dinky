@@ -63,7 +63,6 @@ import org.dinky.data.result.SqlExplainResult;
 import org.dinky.explainer.lineage.LineageBuilder;
 import org.dinky.explainer.lineage.LineageResult;
 import org.dinky.explainer.sqllineage.SQLLineageBuilder;
-import org.dinky.function.FunctionFactory;
 import org.dinky.function.compiler.CustomStringJavaCompiler;
 import org.dinky.function.data.model.UDF;
 import org.dinky.function.pool.UdfCodePool;
@@ -107,7 +106,6 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -583,15 +581,14 @@ public class TaskServiceImpl extends SuperServiceImpl<TaskMapper, Task> implemen
             task.setVersionId(taskVersionId);
             if (Dialect.isUDF(task.getDialect())) {
                 // compile udf class
-                UDF udf = UDFUtils.taskToUDF(task.buildTask());
                 try {
-                    FunctionFactory.initUDF(Collections.singletonList(udf), task.getId());
+                    UDF udf = UDFUtils.taskToUDF(task.buildTask());
+                    UdfCodePool.addOrUpdate(udf);
                 } catch (Throwable e) {
                     throw new BusException(
                             "UDF compilation failed and cannot be published. The error message is as follows:"
                                     + e.getMessage());
                 }
-                UdfCodePool.addOrUpdate(udf);
             }
         } else {
             if (Dialect.isUDF(task.getDialect())
