@@ -39,6 +39,10 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public abstract class BaseTask {
+
+    private static final Set<Class<?>> taskRegistry =
+            ClassUtil.scanPackageBySuper(BaseTask.class.getPackage().getName(), BaseTask.class);
+
     final TaskDTO task;
 
     public abstract JobResult execute() throws Exception;
@@ -58,9 +62,7 @@ public abstract class BaseTask {
     }
 
     public static BaseTask getTask(TaskDTO taskDTO) {
-        Set<Class<?>> classes =
-                ClassUtil.scanPackageBySuper(BaseTask.class.getPackage().getName(), BaseTask.class);
-        for (Class<?> clazz : classes) {
+        for (Class<?> clazz : taskRegistry) {
             SupportDialect annotation = clazz.getAnnotation(SupportDialect.class);
             if (annotation != null) {
                 for (Dialect dialect : annotation.value()) {
