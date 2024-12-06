@@ -35,6 +35,8 @@ public class PathConstant {
     /** UDF path */
     public static final String UDF_PATH = TMP_PATH + "udf" + File.separator;
 
+    public static final String TASK_PATH = TMP_PATH + "task";
+
     public static final String COMPILER = "compiler";
     public static final String PACKAGE = "package";
     /** UDF jar rules */
@@ -63,7 +65,11 @@ public class PathConstant {
         return getPath(UDF_PATH, COMPILER, language.name());
     }
 
-    public static String getUdfPackagePath(Integer missionId, Object... path) {
-        return getPath(UDF_PATH, missionId, PACKAGE, path);
+    public static String getUdfPackagePath(Integer taskId, Object... path) {
+        return getPath(UDF_PATH, taskId, PACKAGE, path);
+    }
+
+    public static String getTaskUdfPath(Integer taskId) {
+        return getPath(TASK_PATH, taskId, "udf");
     }
 }

@@ -31,16 +31,12 @@ import org.dinky.data.result.SqlExplainResult;
 import org.dinky.executor.Executor;
 import org.dinky.explainer.mock.MockStatementExplainer;
 import org.dinky.function.data.model.UDF;
+import org.dinky.function.pool.UdfCodePool;
 import org.dinky.function.util.UDFUtil;
-import org.dinky.interceptor.FlinkInterceptor;
 import org.dinky.job.JobConfig;
 import org.dinky.job.JobManager;
-import org.dinky.job.JobParam;
 import org.dinky.job.JobRunnerFactory;
 import org.dinky.job.JobStatementPlan;
-import org.dinky.job.builder.JobUDFBuilder;
-import org.dinky.trans.Operations;
-import org.dinky.utils.DinkyClassLoaderUtil;
 import org.dinky.utils.LogUtil;
 import org.dinky.utils.SqlUtil;
 
@@ -84,19 +80,6 @@ public class Explainer {
         return new Explainer(executor, useStatementSet, jobManager);
     }
 
-    public Explainer initialize(JobConfig config, String statement) {
-        DinkyClassLoaderUtil.initClassLoader(config, jobManager.getDinkyClassLoader());
-        String[] statements = SqlUtil.getStatements(SqlUtil.removeNote(statement));
-        List<UDF> udfs = parseUDFFromStatements(statements);
-        jobManager.setJobParam(new JobParam(udfs));
-        try {
-            JobUDFBuilder.build(jobManager).run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return this;
-    }
-
     public JobStatementPlan parseStatements(String[] statements) {
         JobStatementPlan jobStatementPlanWithMock = new JobStatementPlan();
         generateUDFStatement(jobStatementPlanWithMock);
@@ -115,7 +98,9 @@ public class Explainer {
         List<String> udfStatements = new ArrayList<>();
         Optional.ofNullable(jobManager.getConfig().getUdfRefer())
                 .ifPresent(t -> t.forEach((key, value) -> {
-                    String sql = String.format("create temporary function %s as '%s'", value, key);
+                    UDF udf = UdfCodePool.getUDF(key);
+                    String sql = String.format(
+                            "create temporary function %s as '%s' language  %s", value, key, udf.getFunctionLanguage());
                     udfStatements.add(sql);
                 }));
         for (String udfStatement : udfStatements) {
@@ -217,24 +202,27 @@ public class Explainer {
                 .fragment(true)
                 .statementSet(useStatementSet)
                 .parallelism(1)
+                .udfRefer(jobManager.getConfig().getUdfRefer())
                 .configJson(executor.getTableConfig().getConfiguration().toMap())
                 .build();
         jobManager.setConfig(jobConfig);
         jobManager.setExecutor(executor);
-        this.initialize(jobConfig, statement);
 
         List<LineageRel> lineageRelList = new ArrayList<>();
-        for (String item : SqlUtil.getStatements(statement)) {
+        String[] statements = SqlUtil.getStatements(statement);
+        JobStatementPlan jobStatementPlan = parseStatements(statements);
+        List<JobStatement> statementList = jobStatementPlan.getJobStatementList();
+        JobRunnerFactory jobRunnerFactory = JobRunnerFactory.create(jobManager);
+
+        for (JobStatement item : statementList) {
+            String sql = item.getStatement();
+            SqlType sqlType = item.getSqlType();
+
             try {
-                String sql = FlinkInterceptor.pretreatStatement(executor, item);
-                if (Asserts.isNullString(sql)) {
-                    continue;
-                }
-                SqlType operationType = Operations.getOperationType(sql);
-                if (operationType.equals(SqlType.INSERT)) {
+                if (sqlType.equals(SqlType.INSERT)) {
                     lineageRelList.addAll(executor.getLineage(sql));
-                } else if (!operationType.equals(SqlType.SELECT) && !operationType.equals(SqlType.PRINT)) {
-                    executor.executeSql(sql);
+                } else if (!sqlType.equals(SqlType.SELECT) && !sqlType.equals(SqlType.PRINT)) {
+                    jobRunnerFactory.getJobRunner(item.getStatementType()).run(item);
                 }
             } catch (Exception e) {
                 log.error("Exception occurred while fetching lineage information", e);

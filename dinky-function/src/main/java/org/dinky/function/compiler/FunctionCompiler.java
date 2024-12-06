@@ -19,21 +19,27 @@
 
 package org.dinky.function.compiler;
 
-import org.dinky.assertion.Asserts;
 import org.dinky.function.data.model.UDF;
 import org.dinky.function.exception.UDFCompilerException;
 
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.ReadableConfig;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.util.StrUtil;
 
 /** @since 0.6.8 */
 public interface FunctionCompiler {
+    Logger log = LoggerFactory.getLogger(FunctionCompiler.class);
+
     Set<String> COMPILER_CACHE = new HashSet<>();
 
     /**
@@ -41,22 +47,24 @@ public interface FunctionCompiler {
      *
      * @param udf udf
      * @param conf flink-conf
-     * @param missionId 任务id
+     * @param taskId 任务id
      * @return 是否成功
      */
-    boolean compiler(UDF udf, ReadableConfig conf, Integer missionId);
+    boolean compiler(UDF udf, ReadableConfig conf, Integer taskId);
 
+    static boolean getCompilerByTask(UDF udf, Map<String, String> conf, Integer taskId) {
+        return getCompiler(udf, Configuration.fromMap(conf), taskId);
+    }
     /**
      * 编译
      *
      * @param udf udf实例
      * @param conf flink-conf
-     * @param missionId 任务id
+     * @param taskId 任务id
      * @return 编译状态
      */
-    static boolean getCompiler(UDF udf, ReadableConfig conf, Integer missionId) {
-        Asserts.checkNull(udf, "udf为空");
-        Asserts.checkNull(udf.getCode(), "udf 代码为空");
+    static boolean getCompiler(UDF udf, ReadableConfig conf, Integer taskId) {
+        log.info("Compiled UDF: {},; Language: {}", udf.getClassName(), udf.getFunctionLanguage());
 
         String key = udf.getClassName() + udf.getFunctionLanguage();
         if (COMPILER_CACHE.contains(key)) {
@@ -65,13 +73,13 @@ public interface FunctionCompiler {
         boolean success;
         switch (udf.getFunctionLanguage()) {
             case JAVA:
-                success = Singleton.get(JavaCompiler.class).compiler(udf, conf, missionId);
+                success = Singleton.get(JavaCompiler.class).compiler(udf, conf, taskId);
                 break;
             case SCALA:
-                success = Singleton.get(ScalaCompiler.class).compiler(udf, conf, missionId);
+                success = Singleton.get(ScalaCompiler.class).compiler(udf, conf, taskId);
                 break;
             case PYTHON:
-                success = Singleton.get(PythonFunction.class).compiler(udf, conf, missionId);
+                success = Singleton.get(PythonFunction.class).compiler(udf, conf, taskId);
                 break;
             default:
                 throw UDFCompilerException.notSupportedException(
@@ -88,11 +96,11 @@ public interface FunctionCompiler {
      *
      * @param udfList udf、实例列表
      * @param conf flink-conf
-     * @param missionId 任务id
+     * @param taskId 任务id
      */
-    static void getCompiler(List<UDF> udfList, ReadableConfig conf, Integer missionId) {
+    static void getCompiler(List<UDF> udfList, ReadableConfig conf, Integer taskId) {
         for (UDF udf : udfList) {
-            if (!getCompiler(udf, conf, missionId)) {
+            if (!getCompiler(udf, conf, taskId)) {
                 throw new UDFCompilerException(StrUtil.format(
                         "codeLanguage:{} , className:{} 编译失败", udf.getFunctionLanguage(), udf.getClassName()));
             }

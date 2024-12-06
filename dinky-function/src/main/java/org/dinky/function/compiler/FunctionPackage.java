@@ -19,6 +19,7 @@
 
 package org.dinky.function.compiler;
 
+import org.dinky.data.exception.BusException;
 import org.dinky.function.data.model.UDF;
 import org.dinky.function.data.model.UDFPath;
 
@@ -32,19 +33,21 @@ public interface FunctionPackage {
      * 打包
      *
      * @param udfList udf列表
-     * @param missionId 任务id
+     * @param taskId 任务id
      * @return 文件绝对路径
      */
-    String[] pack(List<UDF> udfList, Integer missionId);
+    String[] pack(List<UDF> udfList, Integer taskId);
+
+    String pack(UDF udf, Integer taskId);
 
     /**
      * 打包
      *
      * @param udfList udf 列表
-     * @param missionId 任务id
+     * @param taskId 任务id
      * @return 打包结果
      */
-    static UDFPath bale(List<UDF> udfList, Integer missionId) {
+    static UDFPath bale(List<UDF> udfList, Integer taskId) {
         List<UDF> jvmList = new ArrayList<>();
         List<UDF> pythonList = new ArrayList<>();
         for (UDF udf : udfList) {
@@ -59,8 +62,26 @@ public interface FunctionPackage {
             }
         }
         return UDFPath.builder()
-                .jarPaths(new JVMPackage().pack(jvmList, missionId))
-                .pyPaths(new PythonFunction().pack(pythonList, missionId))
+                .jarPaths(new JVMPackage().pack(jvmList, taskId))
+                .pyPaths(new PythonFunction().pack(pythonList, taskId))
                 .build();
+    }
+    /**
+     * 打包
+     *
+     * @param udf    udf 列表
+     * @param taskId 任务id
+     * @return 打包结果
+     */
+    static String bale(UDF udf, Integer taskId) {
+        switch (udf.getFunctionLanguage()) {
+            case JAVA:
+            case SCALA:
+                return new JVMPackage().pack(udf, taskId);
+            case PYTHON:
+                return new PythonFunction().pack(udf, taskId);
+            default:
+                throw new BusException("");
+        }
     }
 }

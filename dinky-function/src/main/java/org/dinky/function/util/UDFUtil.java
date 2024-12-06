@@ -27,7 +27,6 @@ import org.dinky.data.enums.GatewayType;
 import org.dinky.data.exception.DinkyException;
 import org.dinky.data.model.FlinkUdfManifest;
 import org.dinky.data.model.SystemConfiguration;
-import org.dinky.executor.CustomTableEnvironment;
 import org.dinky.function.FunctionFactory;
 import org.dinky.function.compiler.CustomStringJavaCompiler;
 import org.dinky.function.compiler.CustomStringScalaCompiler;
@@ -41,7 +40,6 @@ import org.dinky.utils.URLUtils;
 
 import org.apache.flink.client.python.PythonFunctionFactory;
 import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.PipelineOptions;
 import org.apache.flink.python.PythonOptions;
 import org.apache.flink.table.api.ValidationException;
 import org.apache.flink.table.catalog.FunctionLanguage;
@@ -154,21 +152,21 @@ public class UDFUtil {
         }
     }
 
-    public static String[] initJavaUDF(List<UDF> udf, Integer missionId) {
+    public static String[] initJavaUDF(List<UDF> udf, Integer taskId) {
         return FunctionFactory.initUDF(
                         CollUtil.newArrayList(
                                 CollUtil.filterNew(udf, x -> x.getFunctionLanguage() != FunctionLanguage.PYTHON)),
-                        missionId,
+                        taskId,
                         null)
                 .getJarPaths();
     }
 
     public static String[] initPythonUDF(
-            List<UDF> udf, GatewayType gatewayType, Integer missionId, Configuration configuration) {
+            List<UDF> udf, GatewayType gatewayType, Integer taskId, Configuration configuration) {
         return FunctionFactory.initUDF(
                         CollUtil.newArrayList(
                                 CollUtil.filterNew(udf, x -> x.getFunctionLanguage() == FunctionLanguage.PYTHON)),
-                        missionId,
+                        taskId,
                         configuration)
                 .getPyPaths();
     }
@@ -343,6 +341,7 @@ public class UDFUtil {
                         .className(className)
                         .code(udf.getCode())
                         .functionLanguage(udf.getFunctionLanguage())
+                        .compilePackagePath(udf.getCompilePackagePath())
                         .build();
             }
             String gitPackage = UdfCodePool.getGitPackage(className);
@@ -447,15 +446,6 @@ public class UDFUtil {
         } catch (Exception e) {
             throw new DinkyException(e);
         }
-    }
-
-    public static void addConfigurationClsAndJars(
-            CustomTableEnvironment customTableEnvironment, List<URL> jarList, List<URL> classpaths) {
-        customTableEnvironment.addConfiguration(
-                PipelineOptions.CLASSPATHS,
-                classpaths.stream().map(URL::toString).collect(Collectors.toList()));
-        customTableEnvironment.addConfiguration(
-                PipelineOptions.JARS, jarList.stream().map(URL::toString).collect(Collectors.toList()));
     }
 
     public static void writeManifest(
