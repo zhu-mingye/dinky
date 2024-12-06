@@ -48,7 +48,6 @@ import { SseData, Topic } from '@/models/UseWebSocketModel';
 
 export const Project = (props: any) => {
   const {
-    dispatch,
     centerContent,
     project: { expandKeys, selectedKeys },
     action: { actionType, params },
