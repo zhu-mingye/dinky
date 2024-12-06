@@ -279,7 +279,6 @@ export type TaskState = {
  * en: Task Lineage params.
  */
 export interface StudioLineageParams {
-  type: number;
   statementSet: boolean;
   dialect: string;
   databaseId: number;
@@ -288,6 +287,7 @@ export interface StudioLineageParams {
   fragment: boolean;
   variables: any;
   taskId: number;
+  configJson: TaskExtConfig;
 }
 export type TreeVo = {
   name: string;

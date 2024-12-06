@@ -578,6 +578,7 @@ export default {
   'pages.datastudio.label.jobInfo.versionId': 'Version number',
   'pages.datastudio.label.jobInfo.firstLevelOwner': 'Owner',
   'pages.datastudio.label.jobInfo.secondLevelOwners': 'Maintainer',
+  'pages.datastudio.label.jobInfo.className': 'ClassName',
   'pages.datastudio.label.result.query.latest.data': 'Get the latest data',
   'pages.datastudio.label.result.query.latest.data.truncate':
     'The data is too long to be displayed in full',
