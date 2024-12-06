@@ -309,6 +309,7 @@ const Resource = (props: {
           ghost
           size={'small'}
           bodyStyle={{ height: 'calc(100vh - 180px)', overflow: 'auto' }}
+          className={'datastudio-theme'}
         >
           <Result
             status='warning'
@@ -333,6 +334,7 @@ const Resource = (props: {
         <>
           <ProCard
             style={{ height: '100%' }}
+            className={'datastudio-theme'}
             bodyStyle={{
               paddingTop: 10,
               paddingInline: 5,

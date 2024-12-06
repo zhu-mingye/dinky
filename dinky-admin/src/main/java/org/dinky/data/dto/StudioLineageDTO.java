@@ -19,6 +19,8 @@
 
 package org.dinky.data.dto;
 
+import org.dinky.data.model.ext.TaskExtConfig;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -41,9 +43,6 @@ public class StudioLineageDTO extends AbstractStatementDTO {
             notes = "Flag indicating whether to use Statement Set")
     private Boolean statementSet;
 
-    @ApiModelProperty(value = "Type", dataType = "Integer", example = "1", notes = "The type of the SQL query")
-    private Integer type;
-
     @ApiModelProperty(value = "Dialect", dataType = "String", example = "MySQL", notes = "The SQL dialect")
     private String dialect;
 
@@ -56,4 +55,10 @@ public class StudioLineageDTO extends AbstractStatementDTO {
 
     @ApiModelProperty(value = "Task ID", dataType = "Integer", example = "1", notes = "The identifier of the task")
     private Integer taskId;
+
+    @ApiModelProperty(
+            value = "Configuration JSON",
+            dataType = "TaskExtConfig",
+            notes = "Extended configuration in JSON format for the task")
+    private TaskExtConfig configJson;
 }

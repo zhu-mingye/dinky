@@ -23,13 +23,15 @@ import Paragraph from 'antd/es/typography/Paragraph';
 import { TaskState } from '@/pages/DataStudio/type';
 import { showFirstLevelOwner, showSecondLevelOwners } from '@/pages/DataStudio/function';
 import { UserBaseInfo } from '@/types/AuthCenter/data';
+import { isUDF } from '@/pages/DataStudio/Toolbar/Project/function';
 
 export const TaskInfo = (props: { params: TaskState; users: UserBaseInfo.User[] }) => {
   const {
-    params: { taskId, name, dialect, versionId, firstLevelOwner, secondLevelOwners },
+    params: { taskId, name, dialect, versionId, firstLevelOwner, secondLevelOwners, savePointPath },
     users
   } = props;
 
+  console.log(savePointPath);
   return (
     <div style={{ paddingInline: 8 }}>
       <Descriptions bordered size='small' column={1}>
@@ -51,6 +53,11 @@ export const TaskInfo = (props: { params: TaskState; users: UserBaseInfo.User[] 
         <Descriptions.Item label={l('pages.datastudio.label.jobInfo.secondLevelOwners')}>
           {showSecondLevelOwners(secondLevelOwners, users)}
         </Descriptions.Item>
+        {isUDF(dialect) && (
+          <Descriptions.Item label={l('pages.datastudio.label.jobInfo.className')}>
+            {savePointPath}
+          </Descriptions.Item>
+        )}
       </Descriptions>
     </div>
   );
