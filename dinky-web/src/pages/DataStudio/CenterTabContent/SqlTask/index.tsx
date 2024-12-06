@@ -227,6 +227,15 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
   }, []);
 
   useEffect(() => {
+    setCurrentState((prevState) => ({
+      ...prevState,
+      name: params.name,
+      note: params.note,
+      secondLevelOwners: params.secondLevelOwners,
+      firstLevelOwner: params.firstLevelOwner
+    }));
+  }, [params]);
+  useEffect(() => {
     return subscribeTopic(Topic.TASK_RUN_INSTANCE, null, (data: SseData) => {
       if (data?.data?.RunningTaskId) {
         setIsRunning(data?.data?.RunningTaskId.includes(params.taskId));
