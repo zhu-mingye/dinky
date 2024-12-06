@@ -22,14 +22,12 @@ package org.dinky.alert.wechat.params;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor(onConstructor = @__(@JsonCreator))
+@NoArgsConstructor
 @AllArgsConstructor
 public class WechatParams {
 
