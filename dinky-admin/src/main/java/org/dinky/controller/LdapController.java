@@ -25,7 +25,6 @@ import org.dinky.data.dto.UserDTO;
 import org.dinky.data.enums.BusinessType;
 import org.dinky.data.enums.Status;
 import org.dinky.data.exception.AuthException;
-import org.dinky.data.model.SystemConfiguration;
 import org.dinky.data.model.rbac.User;
 import org.dinky.data.result.Result;
 import org.dinky.service.LdapService;
@@ -43,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import cn.dev33.satoken.annotation.SaIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -62,13 +60,6 @@ public class LdapController {
 
     @Autowired
     UserService userService;
-
-    @GetMapping("/ldapEnableStatus")
-    @SaIgnore
-    @ApiOperation("Get LDAP enable status")
-    public Result<Boolean> ldapStatus() {
-        return Result.succeed(SystemConfiguration.getInstances().getLdapEnable().getValue());
-    }
 
     @GetMapping("/testConnection")
     @ApiOperation("Test connection to LDAP server")
