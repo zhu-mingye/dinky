@@ -302,7 +302,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
      */
     @Override
     public CatalogDatabase getDatabase(String databaseName) throws DatabaseNotExistException, CatalogException {
-        String querySql = "SELECT id, database_name, description FROM metadata_database WHERE database_name=? AND is_delete=false";
+        String querySql =
+                "SELECT id, database_name, description FROM metadata_database WHERE database_name=? AND is_delete=false";
         Connection conn = getConnection();
         try (PreparedStatement ps = conn.prepareStatement(querySql)) {
             ps.setString(1, databaseName);
@@ -314,7 +315,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
 
                 Map<String, String> map = new HashMap<>();
 
-                String sql = "SELECT \"key\", \"value\" FROM metadata_database_property WHERE database_id=? AND is_delete=false";
+                String sql =
+                        "SELECT \"key\", \"value\" FROM metadata_database_property WHERE database_id=? AND is_delete=false";
                 try (PreparedStatement pStat = conn.prepareStatement(sql)) {
                     pStat.setInt(1, id);
                     ResultSet prs = pStat.executeQuery();
@@ -479,7 +481,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
                 }
             }
             // todo: Now it is actually deleted, whether records will be retained for subsequent designs.
-            String updatePropSql = "UPDATE metadata_database_property SET is_delete=true WHERE database_id=? AND is_delete=false";
+            String updatePropSql =
+                    "UPDATE metadata_database_property SET is_delete=true WHERE database_id=? AND is_delete=false";
             PreparedStatement dStat = conn.prepareStatement(updatePropSql);
             dStat.setInt(1, id);
             dStat.executeUpdate();
@@ -594,7 +597,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
 
         // get all schemas
         // To give table or view
-        String querySql = "SELECT table_name FROM metadata_table WHERE database_name=? AND object_type=? AND is_delete=false";
+        String querySql =
+                "SELECT table_name FROM metadata_table WHERE database_name=? AND object_type=? AND is_delete=false";
         Connection conn = getConnection();
         try (PreparedStatement ps = conn.prepareStatement(querySql)) {
             ps.setString(1, tableType);
@@ -635,7 +639,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
 
         Connection conn = getConnection();
         try {
-            String queryTable = "SELECT table_name   ,description, table_type  FROM metadata_table  where  id=? AND is_delete=false";
+            String queryTable =
+                    "SELECT table_name   ,description, table_type  FROM metadata_table  where  id=? AND is_delete=false";
             PreparedStatement ps = conn.prepareStatement(queryTable);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -651,7 +656,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
             }
             if (tableType.equals(ObjectType.TABLE)) {
                 // This is table
-                String propSql = "SELECT \"key\", \"value\" from metadata_table_property  WHERE table_id=? AND is_delete=false";
+                String propSql =
+                        "SELECT \"key\", \"value\" from metadata_table_property  WHERE table_id=? AND is_delete=false";
                 PreparedStatement pState = conn.prepareStatement(propSql);
                 pState.setInt(1, id);
                 ResultSet prs = pState.executeQuery();
@@ -686,7 +692,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
                 }
                 cStat.close();
                 // 3、Take out the query
-                String qSql = "SELECT \"key\", \"value\" FROM metadata_table_property  WHERE table_id=? AND is_delete=false";
+                String qSql =
+                        "SELECT \"key\", \"value\" FROM metadata_table_property  WHERE table_id=? AND is_delete=false";
                 PreparedStatement qStat = conn.prepareStatement(qSql);
                 qStat.setInt(1, id);
                 ResultSet qrs = qStat.executeQuery();
@@ -778,20 +785,21 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
         try {
             // todo: Now it is actually deleted, whether records will be retained for subsequent designs.
             conn.setAutoCommit(false);
-//            String deletePropSql = "delete from metadata_table_property  where table_id=?";
-            String deletePropSql = "UPDATE metadata_table_property SET is_delete=true WHERE table_id=? and is_delete=false";
+            //            String deletePropSql = "delete from metadata_table_property  where table_id=?";
+            String deletePropSql =
+                    "UPDATE metadata_table_property SET is_delete=true WHERE table_id=? and is_delete=false";
 
             PreparedStatement dStat = conn.prepareStatement(deletePropSql);
             dStat.setInt(1, id);
             dStat.executeUpdate();
             dStat.close();
-//            String deleteColSql = "delete from metadata_column  where table_id=?";
+            //            String deleteColSql = "delete from metadata_column  where table_id=?";
             String deleteColSql = "UPDATE metadata_column SET is_delete=true WHERE table_id=? and is_delete=false";
             dStat = conn.prepareStatement(deleteColSql);
             dStat.setInt(1, id);
             dStat.executeUpdate();
             dStat.close();
-//            String deleteDbSql = "delete from metadata_table   where id=?";
+            //            String deleteDbSql = "delete from metadata_table   where id=?";
             String deleteDbSql = "UPDATE metadata_table SET is_delete=true WHERE id=? and is_delete=false";
             dStat = conn.prepareStatement(deleteDbSql);
             dStat.setInt(1, id);
@@ -1263,7 +1271,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
             return null;
         }
         // Get id
-        String getIdSql = "select id from metadata_function  where function_name=? and database_id=? and is_delete=false";
+        String getIdSql =
+                "select id from metadata_function  where function_name=? and database_id=? and is_delete=false";
         Connection conn = getConnection();
         try (PreparedStatement gStat = conn.prepareStatement(getIdSql)) {
             gStat.setString(1, functionPath.getObjectName());
@@ -1341,7 +1350,8 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
         }
 
         Connection conn = getConnection();
-        String insertSql = "update metadata_function  set class_name =?, function_language=? where id=? and is_delete=false";
+        String insertSql =
+                "update metadata_function  set class_name =?, function_language=? where id=? and is_delete=false";
         try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
             ps.setString(1, newFunction.getClassName());
             ps.setString(2, newFunction.getFunctionLanguage().toString());
@@ -1373,7 +1383,7 @@ public class DinkyPostgresCatalog extends AbstractCatalog {
         }
 
         Connection conn = getConnection();
-//        String insertSql = "delete from metadata_function where id=?";
+        //        String insertSql = "delete from metadata_function where id=?";
         String insertSql = "UPDATE metadata_function SET is_delete=true WHERE id=? AND is_delete=false";
         try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
             ps.setInt(1, id);
