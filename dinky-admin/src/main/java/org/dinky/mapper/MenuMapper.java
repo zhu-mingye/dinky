@@ -41,9 +41,7 @@ public interface MenuMapper extends SuperMapper<Menu> {
 
     List<Menu> selectMenuTreeByUserId(@Param("userId") Integer userId);
 
-
     int hasChildByMenuId(Integer menuId);
-
 
     List<String> selectMenuPermsByRoleId(Integer roleId);
 }

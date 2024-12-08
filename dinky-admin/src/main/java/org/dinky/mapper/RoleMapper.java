@@ -23,10 +23,8 @@ import org.dinky.data.model.rbac.Role;
 import org.dinky.mybatis.mapper.SuperMapper;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Set;
 
 /** role mapper interface */
 @Mapper
