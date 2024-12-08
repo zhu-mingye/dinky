@@ -48,10 +48,8 @@ public class PostgreSQLPrepareInterceptor implements Interceptor {
         Field field = boundSql.getClass().getDeclaredField("sql");
         field.setAccessible(true);
         field.set(boundSql, boundSql.getSql().replace("`", "\"").toLowerCase());
-        // 拿出逻辑删除的字段 is_delete 将 is_delete = 0 改为 is_delete = false 防止逻辑删除失效 用正则匹配 因为不能保证空格的位置
         field.set(boundSql, boundSql.getSql().replaceAll("is_delete = 0", "is_delete = false"));
         field.set(boundSql, boundSql.getSql().replaceAll("is_delete = 1", "is_delete = true"));
-        // 将 set is_delete = 0 改为 set is_delete = false 防止逻辑删除失效 用正则匹配 因为不能保证空格的位置
         field.set(boundSql, boundSql.getSql().replaceAll("set is_delete = 0", "set is_delete = false"));
         field.set(boundSql, boundSql.getSql().replaceAll("set is_delete = 1", "set is_delete = true"));
         return invocation.proceed();
