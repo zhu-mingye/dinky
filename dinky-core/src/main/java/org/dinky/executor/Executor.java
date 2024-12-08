@@ -213,6 +213,8 @@ public abstract class Executor {
             SqlType operationType = Operations.getOperationType(statement);
             if (operationType.equals(SqlType.SET) || operationType.equals(SqlType.RESET)) {
                 jobStatementPlan.addJobStatement(statement, JobStatementType.SET, operationType);
+            } else if (operationType.equals(SqlType.EXECUTE_JAR)) {
+                jobStatementPlan.addJobStatement(statement, JobStatementType.EXECUTE_JAR, operationType);
             } else if (operationType.equals(SqlType.EXECUTE)) {
                 jobStatementPlan.addJobStatement(statement, JobStatementType.PIPELINE, operationType);
             } else if (operationType.equals(SqlType.PRINT)) {

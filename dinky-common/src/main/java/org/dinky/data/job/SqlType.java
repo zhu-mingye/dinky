@@ -66,6 +66,8 @@ public enum SqlType {
 
     RESET("RESET", "^RESET.*", SqlCategory.DDL),
 
+    EXECUTE_JAR("EXECUTE_JAR", "^EXECUTE\\s+JAR\\s+WITH.*", SqlCategory.DML),
+
     EXECUTE("EXECUTE", "^EXECUTE.*", SqlCategory.DML),
 
     ADD_JAR("ADD_JAR", "^ADD\\s+JAR\\s+\\S+", SqlCategory.DDL),

@@ -92,7 +92,7 @@ public interface CustomTableEnvironment
         List<String> pathList =
                 Arrays.stream(URLUtil.getURLs(jarPath)).map(URL::toString).collect(Collectors.toList());
         List<String> jars = configuration.get(PipelineOptions.JARS);
-        if (jars == null) {
+        if (CollUtil.isEmpty(jars)) {
             addConfiguration(PipelineOptions.JARS, pathList);
         } else {
             CollUtil.addAll(jars, pathList);

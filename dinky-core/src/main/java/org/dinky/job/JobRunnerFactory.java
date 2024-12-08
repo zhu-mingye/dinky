@@ -21,6 +21,7 @@ package org.dinky.job;
 
 import org.dinky.data.job.JobStatementType;
 import org.dinky.job.runner.JobDDLRunner;
+import org.dinky.job.runner.JobJarRunner;
 import org.dinky.job.runner.JobPipelineRunner;
 import org.dinky.job.runner.JobSetRunner;
 import org.dinky.job.runner.JobSqlRunner;
@@ -31,12 +32,14 @@ public class JobRunnerFactory {
     private JobSqlRunner jobSqlRunner;
     private JobPipelineRunner jobPipelineRunner;
     private JobDDLRunner jobDDLRunner;
+    private JobJarRunner jobJarRunner;
 
     public JobRunnerFactory(JobManager jobManager) {
         this.jobSetRunner = new JobSetRunner(jobManager);
         this.jobSqlRunner = new JobSqlRunner(jobManager);
         this.jobPipelineRunner = new JobPipelineRunner(jobManager);
         this.jobDDLRunner = new JobDDLRunner(jobManager);
+        this.jobJarRunner = new JobJarRunner(jobManager);
     }
 
     public JobRunner getJobRunner(JobStatementType jobStatementType) {
@@ -47,6 +50,8 @@ public class JobRunnerFactory {
                 return jobSqlRunner;
             case PIPELINE:
                 return jobPipelineRunner;
+            case EXECUTE_JAR:
+                return jobJarRunner;
             case DDL:
             default:
                 return jobDDLRunner;
