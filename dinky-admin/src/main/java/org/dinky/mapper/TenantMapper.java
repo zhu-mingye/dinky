@@ -30,7 +30,4 @@ import java.util.Set;
 
 /** tenant mapper interface */
 @Mapper
-public interface TenantMapper extends SuperMapper<Tenant> {
-
-    List<Tenant> getTenantByIds(@Param("tenantIds") Set<Integer> tenantIds);
-}
+public interface TenantMapper extends SuperMapper<Tenant> { }

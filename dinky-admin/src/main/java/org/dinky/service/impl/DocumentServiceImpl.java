@@ -39,9 +39,13 @@ public class DocumentServiceImpl extends SuperServiceImpl<DocumentMapper, Docume
     public List<Document> getFillAllByVersion(String version) {
         if (Asserts.isNotNullString(version)) {
             return baseMapper.selectList(
-                    new QueryWrapper<Document>().eq("version", version).eq("enabled", 1));
+                    new QueryWrapper<Document>().lambda().eq(Document::getVersion, version).eq(Document::getEnabled, true)
+                            .eq(Document::getIsDelete, false)
+            );
         } else {
-            return baseMapper.selectList(new QueryWrapper<Document>().eq("enabled", 1));
+            return baseMapper.selectList(new QueryWrapper<Document>().lambda().eq(Document::getEnabled, true)
+                    .eq(Document::getIsDelete, false)
+            );
         }
     }
 

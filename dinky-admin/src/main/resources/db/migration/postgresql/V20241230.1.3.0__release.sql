@@ -1,6 +1,8 @@
 
 SELECT add_column_if_not_exists('public','dinky_alert_history', 'is_delete', 'boolean', 'false', 'is delete 0: false, 1: true');
 
+SELECT add_column_if_not_exists('public','dinky_history', 'is_delete', 'boolean', 'false', 'is delete 0: false, 1: true');
+
 SELECT add_column_if_not_exists('public','dinky_job_instance', 'is_delete', 'boolean', 'false', 'is delete 0: false, 1: true');
 
 SELECT add_column_if_not_exists('public','dinky_job_history', 'is_delete', 'boolean', 'false', 'is delete 0: false, 1: true');
