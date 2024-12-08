@@ -19,8 +19,6 @@
 
 package org.dinky.interceptor;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.Interceptor;
@@ -32,6 +30,8 @@ import org.apache.ibatis.plugin.Signature;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.Properties;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Intercepts({
     @Signature(
