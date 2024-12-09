@@ -37,6 +37,7 @@ import org.dinky.gateway.exception.GatewayException;
 import org.dinky.gateway.result.SavePointResult;
 import org.dinky.gateway.result.TestResult;
 import org.dinky.gateway.result.YarnResult;
+import org.dinky.gateway.utils.RequestKerberosUrlUtils;
 import org.dinky.utils.FlinkJsonUtil;
 import org.dinky.utils.ThreadUtil;
 
@@ -73,9 +74,12 @@ import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.apache.zookeeper.ZooKeeper;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -404,6 +408,39 @@ public abstract class YarnGateway extends AbstractGateway {
                     + JobsOverviewHeaders.URL.substring(1);
 
             String json = HttpUtil.get(url);
+
+            // 增加判断访问Flink WebUI如果认证失败，尝试使用Kerberos认证
+            if (HttpUtil.createGet(url).execute().getStatus() == 401) {
+                logger.info("yarn application api url:" + url);
+                logger.info(
+                        "HTTP API return code 401, try to authenticate using the Kerberos get yarn application state.");
+                org.apache.http.HttpResponse httpResponse = null;
+                String principal = configuration.get(SecurityOptions.KERBEROS_LOGIN_PRINCIPAL);
+                String keytab = configuration.get(SecurityOptions.KERBEROS_LOGIN_KEYTAB);
+                logger.info("get principal:" + principal + "||keytab:" + keytab);
+                BufferedReader in = null;
+                try {
+                    RequestKerberosUrlUtils restTest = new RequestKerberosUrlUtils(principal, keytab, null, false);
+                    httpResponse = restTest.callRestUrl(url, principal);
+                    InputStream inputStream = httpResponse.getEntity().getContent();
+                    in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                    String str = null;
+                    while ((str = in.readLine()) != null) {
+                        logger.info("yarn application state api content:" + str);
+                        json = str;
+                    }
+                    if (httpResponse.getStatusLine().getStatusCode() != 200) {
+                        throw new RuntimeException(String.format(
+                                "Failed to get job details, please check yarn cluster status. Web URL is: %s the job tracking url is: %s",
+                                webUrl, url));
+                    }
+                } catch (Exception e) {
+                    logger.info("Failed to kerberos authentication:" + e.getMessage());
+                    e.printStackTrace();
+                }
+                logger.info("kerberos authentication login successfully and start to get job details");
+            }
+
             try {
                 MultipleJobsDetails jobsDetails = FlinkJsonUtil.toBean(json, JobsOverviewHeaders.getInstance());
                 jobDetailsList.addAll(jobsDetails.getJobs());
