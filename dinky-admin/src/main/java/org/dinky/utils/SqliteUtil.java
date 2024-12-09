@@ -19,6 +19,9 @@
 
 package org.dinky.utils;
 
+import org.dinky.data.constant.DirConstant;
+import org.dinky.data.constant.MonitorTableConstant;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -35,11 +38,12 @@ public enum SqliteUtil {
     INSTANCE;
 
     private Connection connection;
-    private final AtomicLong lastRecyle = new AtomicLong(0);
+    private final AtomicLong lastRecycle = new AtomicLong(0);
 
     static {
         try {
-            SqliteUtil.INSTANCE.connect("dinky.db");
+            SqliteUtil.INSTANCE.connect(
+                    DirConstant.getTempRootDir() + DirConstant.FILE_SEPARATOR + MonitorTableConstant.DINKY_DB);
             SqliteUtil.INSTANCE.recyleData();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -68,10 +72,10 @@ public enum SqliteUtil {
 
     public void recyleData() {
         long now = System.currentTimeMillis();
-        if (now - lastRecyle.get() < 1000 * 60 * 60) {
+        if (now - lastRecycle.get() < 1000 * 60 * 60) {
             return;
         }
-        lastRecyle.set(now);
+        lastRecycle.set(now);
         try {
             String sql = "DELETE FROM dinky_metrics WHERE heart_time <= datetime('now', '-7 days')";
             executeSql(sql);
