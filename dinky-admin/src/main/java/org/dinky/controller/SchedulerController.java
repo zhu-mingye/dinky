@@ -102,9 +102,9 @@ public class SchedulerController {
     }
 
     /**
-     * 获取任务组
+     * Get task group
      * @param projectCode
-     * @return
+     * @return Result object containing a list of task groups
      */
     @GetMapping(value = "/task/groups")
     public Result<List<TaskGroup>> getTaskGroups(@RequestParam("projectCode") Long projectCode) {
