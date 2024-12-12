@@ -59,7 +59,6 @@ const WelcomeItem = (prop: WelcomeProps) => {
           <Link onClick={() => prop.onNext()}>{l('welcome.welcome.skip')}</Link>
         </Flex>
       </div>
-      <WelcomePic1 size={500} />
     </Flex>
   );
 };

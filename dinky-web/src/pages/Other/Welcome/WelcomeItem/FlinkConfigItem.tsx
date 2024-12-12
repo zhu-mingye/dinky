@@ -72,7 +72,6 @@ const FlinkConfigItem = (prop: WelcomeProps) => {
 
         <Link onClick={prop.onPrev}> {l('welcome.prev')}</Link>
       </div>
-      <WelcomePic1 size={500} />
     </Flex>
   );
 };
