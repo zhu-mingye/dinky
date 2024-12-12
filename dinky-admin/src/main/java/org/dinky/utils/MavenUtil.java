@@ -168,7 +168,9 @@ public class MavenUtil {
         commandLine.add("-Dclassworlds.conf=" + StrUtil.wrap(mavenHome + "/bin/m2.conf", "\""));
         commandLine.add("-s " + settingsPath);
         commandLine.add("-f " + projectDir);
-        commandLine.add(StrUtil.wrap(StrUtil.replace(args, "\"", "\\*"), "\""));
+        if (StrUtil.isNotBlank(args)) {
+            commandLine.add(StrUtil.wrap(StrUtil.replace(args, "\"", "\\*"), "\""));
+        }
         commandLine.add(StrUtil.join(" ", goals));
         return StrUtil.join(" ", commandLine);
     }
