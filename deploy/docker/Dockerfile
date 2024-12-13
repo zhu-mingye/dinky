@@ -27,7 +27,7 @@ COPY --from=ui-build /build/dist/ /build/dinky-web/dist/
 
 RUN mvn package -Dmaven.test.skip=true -P prod,flink-single-version,flink-${FLINK_VERSION},fast
 RUN mkdir release &&  \
-    tar -C release -xvf build/dinky-release-${FLINK_VERSION}-${DINKY_VERSION}.tar.gz && \
+    tar -C release -xvf build/dinky-release-${FLINK_VERSION}-*.tar.gz && \
     mv release/dinky-release-* release/dinky
 
 
@@ -48,7 +48,7 @@ RUN rm -f  /opt/dinky/extends/flink${FLINK_VERSION}/flink/flink-table-planner-lo
 
 COPY --from=flink-base  /opt/flink/opt/flink-table-planner*.jar /opt/dinky/extends/flink${FLINK_VERSION}/flink/
 
-RUN mkdir /opt/dinky/customJar && chmod -R 777 /opt/dinky/ && sed -i 's/-Xms512M -Xmx2048M -XX:PermSize=512M/-XX:+UseContainerSupport -XX:InitialRAMPercentage=70.0 -XX:MaxRAMPercentage=70.0/g' auto.sh
+RUN mkdir /opt/dinky/customJar && chmod -R 777 /opt/dinky/ && sed -i 's/-Xms512M -Xmx2048M -XX:PermSize=512M/-XX:+UseContainerSupport -XX:InitialRAMPercentage=70.0 -XX:MaxRAMPercentage=70.0/g' ./bin/auto.sh
 
 EXPOSE 8888
 

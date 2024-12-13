@@ -1,0 +1,26 @@
+version: "3"
+networks:
+  dinky_net:
+    external: true
+services:
+  jobmanager:
+    restart: always
+    image: flink:1.14.6
+    command: jobmanager
+    environment:
+      - HADOOP_CONF_DIR=/opt/flink/conf
+    volumes:
+      - ./conf:/opt/flink/conf
+      - ./flink-shaded-hadoop-2-uber-2.8.3-10.0.jar:/opt/flink/lib/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar
+    networks:
+      - dinky_net
+  taskmanager:
+    image: flink:1.14.6
+    command: taskmanager
+    environment:
+      - HADOOP_CONF_DIR=/opt/flink/conf
+    volumes:
+      - ./conf:/opt/flink/conf
+      - ./flink-shaded-hadoop-2-uber-2.8.3-10.0.jar:/opt/flink/lib/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar
+    networks:
+      - dinky_net
