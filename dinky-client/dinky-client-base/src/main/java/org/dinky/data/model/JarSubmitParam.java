@@ -93,4 +93,17 @@ public class JarSubmitParam {
         }
         return args;
     }
+
+    public String getStatement() {
+        return StrUtil.format(
+                "EXECUTE JAR WITH (\n" + "'uri'='{}',\n"
+                        + "'main-class'='{}',\n"
+                        + "'args'='{}',\n"
+                        + "'allowNonRestoredState'='{}'\n"
+                        + ");",
+                getUri(),
+                getMainClass(),
+                getArgs(),
+                getAllowNonRestoredState());
+    }
 }

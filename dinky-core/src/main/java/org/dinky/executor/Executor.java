@@ -25,6 +25,7 @@ import org.dinky.context.CustomTableEnvironmentContext;
 import org.dinky.data.job.JobStatement;
 import org.dinky.data.job.JobStatementType;
 import org.dinky.data.job.SqlType;
+import org.dinky.data.model.JarSubmitParam;
 import org.dinky.data.model.LineageRel;
 import org.dinky.data.result.SqlExplainResult;
 import org.dinky.explainer.print_table.PrintStatementExplainer;
@@ -66,6 +67,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.URLUtil;
@@ -214,7 +216,10 @@ public abstract class Executor {
             if (operationType.equals(SqlType.SET) || operationType.equals(SqlType.RESET)) {
                 jobStatementPlan.addJobStatement(statement, JobStatementType.SET, operationType);
             } else if (operationType.equals(SqlType.EXECUTE_JAR)) {
-                jobStatementPlan.addJobStatement(statement, JobStatementType.EXECUTE_JAR, operationType);
+                JarSubmitParam jarSubmitParam = JarSubmitParam.build(statement);
+                jarSubmitParam.setUri("base64@" + Base64.encode(pretreatStatement(jarSubmitParam.getArgs())));
+                jobStatementPlan.addJobStatement(
+                        jarSubmitParam.toString(), JobStatementType.EXECUTE_JAR, operationType);
             } else if (operationType.equals(SqlType.EXECUTE)) {
                 jobStatementPlan.addJobStatement(statement, JobStatementType.PIPELINE, operationType);
             } else if (operationType.equals(SqlType.PRINT)) {
