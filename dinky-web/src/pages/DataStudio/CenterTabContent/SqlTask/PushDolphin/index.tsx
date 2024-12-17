@@ -46,7 +46,7 @@ import { InitPushDolphinParams } from '@/types/Studio/init.d';
 import { Button, Form, Tag } from 'antd';
 import { DefaultOptionType } from 'antd/es/select';
 import React, { useEffect } from 'react';
-import {TaskState} from "@/pages/DataStudio/type";
+import { TaskState } from '@/pages/DataStudio/type';
 
 type PushDolphinProps = {
   onCancel: () => void;

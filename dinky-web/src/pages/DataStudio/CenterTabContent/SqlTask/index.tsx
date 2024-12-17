@@ -81,7 +81,12 @@ import {
 import { l } from '@/utils/intl';
 import { editor } from 'monaco-editor';
 import { DataStudioActionType } from '@/pages/DataStudio/data.d';
-import {getDataByParams, handleOption, handlePutDataJson, queryDataByParams} from '@/services/BusinessCrud';
+import {
+  getDataByParams,
+  handleOption,
+  handlePutDataJson,
+  queryDataByParams
+} from '@/services/BusinessCrud';
 import { API_CONSTANTS } from '@/services/endpoints';
 import { Jobs, LineageDetailInfo } from '@/types/DevOps/data';
 import { lockTask, matchLanguage } from '@/pages/DataStudio/function';
@@ -98,8 +103,12 @@ import { ResourceInfo } from '@/types/RegCenter/data';
 import { buildResourceTreeDataAtTreeForm } from '@/pages/RegCenter/Resource/components/FileTree/function';
 import { ProFormDependency } from '@ant-design/pro-form';
 import { SavePoint } from '@/pages/DataStudio/CenterTabContent/SqlTask/SavePoint';
-import {DolphinTaskDefinition, DolphinTaskGroupInfo, DolphinTaskMinInfo} from "@/types/Studio/data";
-import PushDolphin from "@/pages/DataStudio/CenterTabContent/SqlTask/PushDolphin";
+import {
+  DolphinTaskDefinition,
+  DolphinTaskGroupInfo,
+  DolphinTaskMinInfo
+} from '@/types/Studio/data';
+import PushDolphin from '@/pages/DataStudio/CenterTabContent/SqlTask/PushDolphin';
 
 export type FlinkSqlProps = {
   showDesc: boolean;
@@ -663,14 +672,14 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
       );
 
     let dolphinTaskGroup: DolphinTaskGroupInfo[] | undefined = undefined;
-    if (dolphinTaskDefinition?.projectCode){
-      dolphinTaskGroup = await queryDataByParams<
-        DolphinTaskGroupInfo[]
-      >(API_CONSTANTS.SCHEDULER_QUERY_TASK_GROUP, {
-        projectCode: dolphinTaskDefinition?.projectCode || undefined
-      });
+    if (dolphinTaskDefinition?.projectCode) {
+      dolphinTaskGroup = await queryDataByParams<DolphinTaskGroupInfo[]>(
+        API_CONSTANTS.SCHEDULER_QUERY_TASK_GROUP,
+        {
+          projectCode: dolphinTaskDefinition?.projectCode || undefined
+        }
+      );
     }
-
 
     const formValuesInfo = dolphinTaskDefinition
       ? JSON.parse(JSON.stringify(dolphinTaskDefinition))
