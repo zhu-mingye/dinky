@@ -4,8 +4,10 @@ networks:
     external: true
 services:
   jobmanager:
+    hostname: jobmanager
+    container_name: jobmanager
     restart: always
-    image: flink:1.14.6
+    image: flink:${FLINK_VERSION}-scala_2.12-java8
     command: jobmanager
     environment:
       - HADOOP_CONF_DIR=/opt/flink/conf
@@ -15,7 +17,9 @@ services:
     networks:
       - dinky_net
   taskmanager:
-    image: flink:1.14.6
+    hostname: taskmanager
+    container_name: taskmanager
+    image: flink:${FLINK_VERSION}-scala_2.12-java8
     command: taskmanager
     environment:
       - HADOOP_CONF_DIR=/opt/flink/conf
@@ -24,3 +28,5 @@ services:
       - ./flink-shaded-hadoop-2-uber-2.8.3-10.0.jar:/opt/flink/lib/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar
     networks:
       - dinky_net
+    depends_on:
+      - jobmanager
