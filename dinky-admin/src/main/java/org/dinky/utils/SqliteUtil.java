@@ -43,9 +43,9 @@ public enum SqliteUtil {
 
     static {
         try {
-SqliteUtil.INSTANCE.connect(
+            SqliteUtil.INSTANCE.connect(
                     DirConstant.getTempRootDir() + DirConstant.FILE_SEPARATOR + MonitorTableConstant.DINKY_DB);
-            SqliteUtil.INSTANCE.recyleData();
+            SqliteUtil.INSTANCE.recycleData();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

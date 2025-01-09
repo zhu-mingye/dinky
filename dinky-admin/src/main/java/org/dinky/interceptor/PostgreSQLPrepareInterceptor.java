@@ -53,7 +53,12 @@ public class PostgreSQLPrepareInterceptor implements Interceptor {
         field.set(boundSql, boundSql.getSql().replaceAll("is_delete = 1", "is_delete = true"));
         field.set(boundSql, boundSql.getSql().replaceAll("set is_delete = 0", "set is_delete = false"));
         field.set(boundSql, boundSql.getSql().replaceAll("set is_delete = 1", "set is_delete = true"));
-        field.set(boundSql, boundSql.getSql().replace("`", "\"").replace("concat('%', ?, '%')", "concat('%', ?::text, '%')").toLowerCase());
+        field.set(
+                boundSql,
+                boundSql.getSql()
+                        .replace("`", "\"")
+                        .replace("concat('%', ?, '%')", "concat('%', ?::text, '%')")
+                        .toLowerCase());
 
         return invocation.proceed();
     }
