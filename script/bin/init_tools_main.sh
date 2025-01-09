@@ -1,26 +1,4 @@
 #!/bin/bash
-set -x
-
-ENV_FILE="/etc/profile.d/dinky_env"
-if [ -f "${ENV_FILE}" ]; then
-    source "${ENV_FILE}"
-else
-    echo "" > "${ENV_FILE}"
-    source "${ENV_FILE}"
-fi
-
-DB_ENV_FILE="/etc/profile.d/dinky_db"
-if [ -f "${DB_ENV_FILE}" ]; then
-    source "${DB_ENV_FILE}"
-else
-    echo "" > "${DB_ENV_FILE}"
-    source "${DB_ENV_FILE}"
-fi
-chmod 755 $ENV_FILE
-chmod 755 $DB_ENV_FILE
-
-source /etc/profile
-
 
 export RED='\033[31m'
 export GREEN='\033[32m'
@@ -30,17 +8,71 @@ export MAGENTA='\033[35m'
 export CYAN='\033[36m'
 export RESET='\033[0m'
 
+# debug mode: true or false If empty, defaults to false
+USE_DEBUG=$1
+
+if [ -z "${USE_DEBUG}" ]; then
+    USE_DEBUG="false"
+    echo -e "${YELLOW}Debug mode is not enabled, if you need to enable debug mode, please add the first parameter 'true' when executing the script. example: init_tools_main.sh true $RESET"
+elif [ "${USE_DEBUG}" = "true" ]; then
+    set -x
+fi
+
+ENV_FILE="/etc/profile.d/dinky_env"
+if [ -f "${ENV_FILE}" ]; then
+    source "${ENV_FILE}"
+else
+    echo "export PATH=/bin:/usr/bin:\$PATH" > "${ENV_FILE}" && source "${ENV_FILE}"
+fi
+
+DB_ENV_FILE="/etc/profile.d/dinky_db"
+if [ -f "${DB_ENV_FILE}" ]; then
+    source "${DB_ENV_FILE}"
+else
+    echo "export PATH=/bin:/usr/bin:\$PATH" > "${DB_ENV_FILE}" && source "${DB_ENV_FILE}"
+fi
+chmod 755 $ENV_FILE
+chmod 755 $DB_ENV_FILE
+
+
 echo -e "${GREEN}=====================================================================${RESET}"
 echo -e "${GREEN}=====================================================================${RESET}"
 echo -e "${GREEN}============ Welcome to the Dinky initialization script =============${RESET}"
 echo -e "${GREEN}======================================================================${RESET}"
 echo -e "${GREEN}======================================================================${RESET}"
 
-APP_HOME=${DINKY_HOME:-$(cd "$(dirname "$0")"; cd ..; pwd)}
+
+RETURN_HOME_PATH=""
+function get_home_path() {
+    SOURCE="${BASH_SOURCE[0]}"
+    while [ -h "$SOURCE" ]; do
+        DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+        SOURCE="$(readlink "$SOURCE")"
+        [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+    done
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    RETURN_HOME_PATH=$(dirname "$DIR")
+}
+
+
+
+if [ -z "${DINKY_HOME}" ]; then
+    echo -e "${RED}DINKY_HOME environment variable is not set. Attempting to determine the correct path...${RESET}"
+    get_home_path
+    APP_HOME="${RETURN_HOME_PATH}"
+else
+    get_home_path
+    if [ "${DINKY_HOME}" != "${RETURN_HOME_PATH}" ]; then
+        echo -e "${YELLOW}DINKY_HOME is not equal to the current path, use new path to init: ${RETURN_HOME_PATH}${RESET}"
+        APP_HOME="${RETURN_HOME_PATH}"
+    else
+        echo -e "${GREEN}DINKY_HOME is already set to: ${DINKY_HOME}${RESET}"
+    fi
+fi
+
+echo -e "${GREEN}Dinky root path: ${APP_HOME} ${RESET}"
 
 sudo chmod +x "${APP_HOME}"/bin/init_*.sh
-
-
 
 EXTENDS_HOME="${APP_HOME}/extends"
 if [ ! -d "${EXTENDS_HOME}" ]; then
@@ -68,7 +100,7 @@ if [ ! -d "${DINKY_LIB}" ]; then
     exit 1
 fi
 
-# 函数：检查命令是否存在，不存在则尝试安装
+# Function: Check whether the command exists, if not, try to install it
 check_command() {
     local cmd="$1"
     echo -e "${BLUE}Check if command: $cmd exists...${RESET}"
@@ -87,7 +119,8 @@ check_command() {
     echo -e "${GREEN}========== Command $cmd check completed. OK, continue executing the script. ==========${RESET}"
 }
 
-sh "${APP_HOME}/bin/init_check_network.sh"
+# Use source transparent transmission in debug mode
+source "${APP_HOME}/bin/init_check_network.sh"
 
 check_command "wget"
 
@@ -124,29 +157,41 @@ export -f add_to_env
 echo
 echo
 
+function init_env() {
+    while true; do
+        read -p "Do you need to configure the DINKY_HOME environment variable? (yes/no)：" is_init_dinky_home
+        is_init_dinky_home=$(echo "$is_init_dinky_home" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
+        case $is_init_dinky_home in
+          yes | y)
+            # Use source transparent transmission in debug mode
+            source "${APP_HOME}"/bin/init_env.sh ${APP_HOME} ${ENV_FILE}
+            echo -e "${GREEN}DINKY_HOME environment variable configuration completed. the configuration file is：${ENV_FILE} ${RESET}"
+            break
+            ;;
+          no | n)
+            echo -e "${GREEN}Skip DINKY_HOME environment variable configuration.${RESET}"
+            break
+            ;;
+          *)
+            echo -e "${RED}The entered value is incorrect, please rerun the script to select the correct value.${RESET}"
+            ;;
+        esac
+      done
+}
+
+
+
 echo -e "${GREEN} ====================== Environment variable initialization script -> Start ====================== ${RESET}"
 DINKY_HOME_TMP=$(echo $DINKY_HOME)
 if [ -z "$DINKY_HOME_TMP" ]; then
-  while true; do
-    read -p "Do you need to configure the DINKY_HOME environment variable? (yes/no)：" is_init_dinky_home
-    is_init_dinky_home=$(echo "$is_init_dinky_home" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
-    case $is_init_dinky_home in
-      yes | y)
-        sh "${APP_HOME}"/bin/init_env.sh ${APP_HOME} ${ENV_FILE}
-        echo -e "${GREEN}DINKY_HOME environment variable configuration completed. the configuration file is：${ENV_FILE} ${RESET}"
-        break
-        ;;
-      no | n)
-        echo -e "${GREEN}Skip DINKY_HOME environment variable configuration.${RESET}"
-        break
-        ;;
-      *)
-        echo -e "${RED}The entered value is incorrect, please rerun the script to select the correct value.${RESET}"
-        ;;
-    esac
-  done
+  init_env
 else
-  echo -e "${GREEN}DINKY_HOME environment variable has been configured at ${DINKY_HOME_TMP}，Skip configuration.${RESET}"
+  if [ "$APP_HOME" != "$DINKY_HOME_TMP" ]; then
+    echo -e "${RED}DINKY_HOME is not equal to the current path, The previous one was: ${DINKY_HOME_TMP}. The current one is: ${APP_HOME}, which needs to be reconfigured.${RESET}"
+    init_env
+  else
+      echo -e "${GREEN}DINKY_HOME environment variable has been configured at ${DINKY_HOME_TMP}，Skip configuration.${RESET}"
+  fi
 fi
 
 
@@ -162,17 +207,18 @@ while true; do
     echo -e "${BLUE} ======== (h2 comes with it by default and does not need to perform this step)===========  ${RESET}"
     echo -e "${BLUE} ============================== Please select 1, 2, 3 ======================================  ${RESET}"
     echo -e "${BLUE} ==================================== 1. mysql =============================================  ${RESET}"
-    echo -e "${BLUE} ==================================== 2. pgsql =========================================  ${RESET}"
+    echo -e "${BLUE} ==================================== 2. postgresql =========================================  ${RESET}"
     echo -e "${BLUE} ================================ 3. Skip this step ==========================================  ${RESET}"
     echo -e "${BLUE} ================================ Enter number selection ==================================  ${RESET}"
     read -p "Please enter your database type：" db_type
     case $db_type in
         1)
-            sh "${APP_HOME}"/bin/init_jdbc_driver.sh "${DINKY_LIB}"
+             # Use source transparent transmission in debug mode
+            source  "${APP_HOME}"/bin/init_jdbc_driver.sh "${DINKY_LIB}"
             break
             ;;
         2)
-            echo -e "${GREEN}It seems that pgsql has been integrated by default, so there is no need to perform this step. Please perform subsequent installation and configuration operations as needed.${RESET}"
+            echo -e "${GREEN}It seems that postgresql has been integrated by default, so there is no need to perform this step. Please perform subsequent installation and configuration operations as needed.${RESET}"
             break
             ;;
         3)
@@ -208,19 +254,18 @@ else
     echo -e "${GREEN}The current Flink version number deployed by Dinky:${FLINK_VERSION_SCAN}${RESET}"
 fi
 
-# 根据 Dinky 部署的Flink对应的版本号，获取对应的 Flink 版本
 CURRENT_FLINK_FULL_VERSION=${version_map[$FLINK_VERSION_SCAN]}
 
 echo -e "${GREEN}Obtain the version number corresponding to the deployed Flink (full version number) based on the scanned current Flink version number: flink-${CURRENT_FLINK_FULL_VERSION}${RESET}"
 
-# 步骤2：获取Dinky部署的Flink对应的版本号，然后下载Flink安装包
 while true; do
     read -p "It is detected that the Flink version number deployed by Dinky is: ${FLINK_VERSION_SCAN}, and the Flink installation package version number that needs to be downloaded is: flink-${CURRENT_FLINK_FULL_VERSION}-bin-scala_2.12.tgz. Please choose whether to initialize Flink related dependencies?（yes/no/exit）" is_init_flink
     is_init_flink=$(echo "$is_init_flink" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
 
     case $is_init_flink in
         yes | y )
-            sh "${APP_HOME}"/bin/init_flink_dependences.sh "${CURRENT_FLINK_FULL_VERSION}" "${FLINK_VERSION_SCAN}" "${DINKY_TMP_DIR}" "${EXTENDS_HOME}" "${APP_HOME}"
+             # Use source transparent transmission in debug mode
+            source  "${APP_HOME}"/bin/init_flink_dependences.sh "${CURRENT_FLINK_FULL_VERSION}" "${FLINK_VERSION_SCAN}" "${DINKY_TMP_DIR}" "${EXTENDS_HOME}" "${APP_HOME}"
             break
             ;;
         no | n )
@@ -248,7 +293,8 @@ while true; do
     is_hadoop=$(echo "$is_hadoop" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
     case $is_hadoop in
         yes | y )
-            sh "${APP_HOME}/bin/init_hadoop_dependences.sh" "${EXTENDS_HOME}"
+             # Use source transparent transmission in debug mode
+            source  "${APP_HOME}/bin/init_hadoop_dependences.sh" "${EXTENDS_HOME}"
             break
             ;;
         no | n )
@@ -277,7 +323,8 @@ while true; do
     is_init_db=$(echo "$is_init_db" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
     case $is_init_db in
         yes | y )
-            sh "${APP_HOME}/bin/init_db.sh" "${DINKY_HOME}" "${DB_ENV_FILE}"
+             # Use source transparent transmission in debug mode
+            source  "${APP_HOME}/bin/init_db.sh" "${DINKY_HOME}" "${DB_ENV_FILE}"
             echo -e "${GREEN}The database configuration file initialization script has been executed successfully the configuration file is：${DB_ENV_FILE} ${RESET}"
             break
             ;;
@@ -295,9 +342,44 @@ while true; do
     esac
 done
 echo -e "${GREEN} ====================== Database configuration file initialization script -> End ====================== ${RESET}"
+
+function echo_warning_msg() {
+  echo -e "${RED}Note: To make these changes permanent, you may need to restart your terminal or run 'source $DB_ENV_FILE && source $ENV_FILE' ${RESET}"
+  echo -e "${RED}Note: To make these changes permanent, you may need to restart your terminal or run 'source $DB_ENV_FILE && source $ENV_FILE' ${RESET}"
+  echo -e "${RED}Note: To make these changes permanent, you may need to restart your terminal or run 'source $DB_ENV_FILE && source $ENV_FILE' ${RESET}"
+}
+
+echo -e "${GREEN} ====================== Dinky service startup script -> Start ====================== ${RESET}"
+
+while true; do
+    read -p "Do you need to start the Dinky service?（yes/no/exit）" is_start
+    is_start=$(echo "$is_start" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]')
+    case $is_start in
+        yes | y )
+             # Use source transparent transmission in debug mode
+            source "${APP_HOME}"/bin/auto.sh restart
+            break
+            ;;
+        no | n )
+            echo_warning_msg
+            echo
+            echo -e "${GREEN}The Dinky service startup script has been skipped, Please execute the above command first, and then start the service manually -> ${APP_HOME}/bin/auto.sh restart | start。${RESET}"
+            break
+            ;;
+        exit | e )
+          echo_warning_msg
+          echo -e "${GREEN}If you choose exit, the program will exit。${RESET}"
+          exit 0
+          ;;
+        *)
+          echo -e "${RED}Invalid input, please re-enter yes/no/exit。${RESET}"
+          ;;
+        esac
+done
+echo -e "${GREEN} ====================== Dinky service startup script -> End ====================== ${RESET}"
 echo
 echo
-echo -e "${RED}Note: To make these changes permanent, you may need to restart your terminal or run 'source $DB_ENV_FILE && source $ENV_FILE' ${RESET}"
-echo -e "${RED}Note: To make these changes permanent, you may need to restart your terminal or run 'source $DB_ENV_FILE && source $ENV_FILE' ${RESET}"
-echo -e "${RED}Note: To make these changes permanent, you may need to restart your terminal or run 'source $DB_ENV_FILE && source $ENV_FILE' ${RESET}"
-echo
+echo -e "${GREEN} ====================== Dinky initialization script execution completed ====================== ${RESET}"
+
+
+set +x

@@ -19,6 +19,9 @@
 
 package org.dinky.utils;
 
+import org.dinky.data.constant.DirConstant;
+import org.dinky.data.constant.MonitorTableConstant;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -40,8 +43,9 @@ public enum SqliteUtil {
 
     static {
         try {
-            SqliteUtil.INSTANCE.connect("dinky.db");
-            SqliteUtil.INSTANCE.recycleData();
+SqliteUtil.INSTANCE.connect(
+                    DirConstant.getTempRootDir() + DirConstant.FILE_SEPARATOR + MonitorTableConstant.DINKY_DB);
+            SqliteUtil.INSTANCE.recyleData();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

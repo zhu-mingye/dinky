@@ -26,7 +26,7 @@ grant all privileges on dinky.* to 'dinky'@'%' identified by 'dinky' with grant 
 mysql>
 flush privileges;
 #此处用 dinky 用户登录
-mysql -h fdw1 -udinky -pdinky
+mysql -h {mysql地址} -udinky -pdinky
 ```
 
 </TabItem>
@@ -123,12 +123,13 @@ Dinky 需要具备内置的 Flink 环境，该 Flink 环境的实现需要用户
 1. Dinky 并没有内置的 mysql/postgres 数据库驱动，需要用户自己上传 mysql-connector-java-xxx.jar/postgresql-xxx.jar 等jdbc 驱动到 `lib 下`或者`extends 下`
 2. Dinky 当前版本的 yarn 的 per-job 与 application 执行模式依赖 flink-shaded-hadoop ，需要额外添加 flink-shaded-hadoop-uber 包，如果您使用的是`flink-shaded-hadoop-uber-3`请手动删除该包内部的 javax.servlet 等冲突内容。
 当然如果你的 Hadoop 为 3+ 也可以自行编译对于版本的 dinky-client-hadoop.jar 以替代 uber 包，
-3. Dinky所有监控相关功能目前强依赖hadoop，即使你不需要任何hadoop功能，也需要上传flink-shaded-hadoop-uber，否则会导致监控功能无法正常使用
 :::
+
 
 将 flink-shaded-hadoop 上传到到 extends 文件目录下，使用 flink-shaded-hadoop-3 地址如下：
 
-```
+```bash
+# 非hadoop环境不需要这步操作
 https://mvnrepository.com/artifact/org.apache.flink/flink-shaded-hadoop-3-uber?repo=cloudera-repos
 ```
 
@@ -186,7 +187,15 @@ https://mvnrepository.com/artifact/org.apache.flink/flink-shaded-hadoop-3-uber?r
     ├── dinky-pg.sql -- PGSql 首次初始化脚本
     └── upgrade  -- 各个版本的升级 SQL
 ```
-对应 `Flink` 版本的依赖，放在Dinky 安装目录下 extends/flink${FLINK_VERSION} 下，例如：
+### 添加Flink依赖
+对应 `Flink` 版本的依赖，放在Dinky 安装目录下 extends/flink${FLINK_VERSION} 下，
+:::warning 注意事项
+Flink自带lib里的planner是带loader的,比如:flink-table-planner-loader-1.16.1.jar,
+需要删除带loader的jar包，换一个不带loader的jar, 可前往flink根下的opt目录中找到，
+对于standalone，hdfs，k8s等集群上的flink集群同样要做此操作
+:::
+
+例如：
 ```shell
 flink-cep-1.16.1.jar
 flink-connector-files-1.16.1.jar
@@ -198,9 +207,7 @@ flink-scala_2.12-1.16.1.jar
 flink-shaded-hadoop-2-uber-2.7.5-8.0.jar
 flink-shaded-zookeeper-3.5.9.jar
 flink-table-api-java-uber-1.16.1.jar
-# !!!特别注意,flink自带lib里的planner是带loader的,比如:flink-table-planner-loader-1.16.1.jar,
-# 需要删除带loader的jar包，换一个不带loader的jar, 可前往flink根下的opt目录中找到
-# 对于standalone，hdfs，k8s等集群上的flink集群同样要做此操作
+
 flink-table-planner_2.12-1.16.1.jar
 
 flink-table-runtime-1.16.1.jar
@@ -219,16 +226,16 @@ log4j-slf4j-impl-2.17.1.jar
 
 ```shell
 #启动
-sh auto.sh start
+sh ./bin/auto.sh start 1.20
 #停止
-sh auto.sh stop
+sh ./bin/auto.sh stop
 #重启
-sh auto.sh restart
+sh ./bin/auto.sh restart
 #查看状态
-sh auto.sh status
+sh ./bin/auto.sh status
 
 # 前台启动(调试使用,会输出日志,阻塞当前终端,结束请Ctrl+C,但是会直接退出服务,仅供启动时无日志输出且在排查问题时使用)
-sh auto.sh startOnPending
+sh auto.sh startOnPending 1.20
 
 ```
 
@@ -237,7 +244,7 @@ sh auto.sh startOnPending
 > 自 1.0.2 版本开始加入了自动检测 Flink 版本的功能，如果不传入版本号，则会自动检测 Flink 版本作为启动版本(即检测 extends 目录下的 flink${FLINK_VERSION} 文件夹)
 ```shell
 #启动
-sh auto.sh start 1.16
+sh ./bin/auto.sh start 1.16
 ```
 
 :::tip 说明

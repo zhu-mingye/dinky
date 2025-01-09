@@ -134,6 +134,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNode;
@@ -587,7 +588,8 @@ public class TaskServiceImpl extends SuperServiceImpl<TaskMapper, Task> implemen
                 } catch (Throwable e) {
                     throw new BusException(
                             "UDF compilation failed and cannot be published. The error message is as follows:"
-                                    + e.getMessage());
+                                    + ExceptionUtil.stacktraceToOneLineString(e),
+                            e);
                 }
             }
         } else {
@@ -1101,10 +1103,10 @@ public class TaskServiceImpl extends SuperServiceImpl<TaskMapper, Task> implemen
     private Boolean hasTaskOperatePermission(Integer firstLevelOwner, List<Integer> secondLevelOwners) {
         boolean isFirstLevelOwner = firstLevelOwner != null && firstLevelOwner == StpUtil.getLoginIdAsInt();
         if (TaskOwnerLockStrategyEnum.OWNER.equals(
-                SystemConfiguration.getInstances().getTaskOwnerLockStrategy())) {
+                SystemConfiguration.getInstances().getTaskOwnerLockStrategy().getValue())) {
             return isFirstLevelOwner;
         } else if (TaskOwnerLockStrategyEnum.OWNER_AND_MAINTAINER.equals(
-                SystemConfiguration.getInstances().getTaskOwnerLockStrategy())) {
+                SystemConfiguration.getInstances().getTaskOwnerLockStrategy().getValue())) {
             return isFirstLevelOwner
                     || (secondLevelOwners != null && secondLevelOwners.contains(StpUtil.getLoginIdAsInt()));
         }

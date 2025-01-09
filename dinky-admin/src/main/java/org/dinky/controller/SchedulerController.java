@@ -66,9 +66,6 @@ public class SchedulerController {
             example = "1")
     public Result<TaskDefinition> getTaskDefinition(@ApiParam(value = "dinky任务id") @RequestParam Long dinkyTaskId) {
         TaskDefinition taskDefinitionInfo = schedulerService.getTaskDefinitionInfo(dinkyTaskId);
-        if (taskDefinitionInfo == null) {
-            return Result.failed(Status.DS_TASK_NOT_EXIST);
-        }
         return Result.succeed(taskDefinitionInfo);
     }
 
@@ -102,9 +99,9 @@ public class SchedulerController {
     }
 
     /**
-     * 获取任务组
+     * Get task group
      * @param projectCode
-     * @return
+     * @return Result object containing a list of task groups
      */
     @GetMapping(value = "/task/groups")
     public Result<List<TaskGroup>> getTaskGroups(@RequestParam("projectCode") Long projectCode) {

@@ -24,4 +24,5 @@ public enum JobStatementType {
     DDL,
     SQL,
     PIPELINE,
+    EXECUTE_JAR
 }

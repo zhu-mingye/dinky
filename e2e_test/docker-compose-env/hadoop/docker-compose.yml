@@ -1,0 +1,94 @@
+﻿version: "3"
+networks:
+  dinky_net:
+    external: true
+
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    hostname: namenode
+    restart: always
+    ports:
+      - 9870:9870
+      - 9000:9000
+    volumes:
+      - ./hadoop-3.2.1/dfs/name:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - hadoop.env
+    networks:
+      - dinky_net
+
+  datanode:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode
+    hostname: datanode
+    restart: always
+    depends_on:
+      - namenode
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+    env_file:
+      - hadoop.env
+    ports:
+      - 9864:9864
+      - 9866:9866
+    networks:
+      - dinky_net
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: resourcemanager
+    hostname: resourcemanager
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864"
+    env_file:
+      - hadoop.env
+    volumes:
+      - ./yarn-site.xml:/opt/hadoop-3.2.1/etc/hadoop/yarn-site.xml
+    networks:
+      - dinky_net
+
+
+  nodemanager:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: nodemanager
+    hostname: nodemanager
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
+    #      JAVA_HOME: /opt/java11
+    #      PYTHON_HOME: /opt/miniconda3
+    #      PATH: $PYTHON_HOME/bin:$PATH
+    env_file:
+      - hadoop.env
+    #    volumes:
+    #      - /opt/jdk11/:/opt/java11
+    #      - ./coda:/opt/coda
+    #      - ./miniconda.sh:/root/miniconda3.sh
+    ##      - /usr/bin/python3.9:/usr/bin/python
+    ##      - /usr/local/lib/python3.9/site-packages:/usr/local/lib/python3.9/site-packages
+    #      - /opt/jdk11/activation-1.1.1.jar:/opt/hadoop-3.2.1/share/hadoop/yarn/lib/activation-1.1.1.jar
+    networks:
+      - dinky_net
+
+  historyserver:
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    container_name: historyserver
+    hostname: historyserver
+    restart: always
+    environment:
+      SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864 resourcemanager:8088"
+    env_file:
+      - hadoop.env
+    ports:
+      - 8188:8188
+      - 10200:10200
+    networks:
+      - dinky_net
+#    extra_hosts:
+#      - resourcemanager:10.13.8.216
+#      - nodemanager:10.13.8.216
+

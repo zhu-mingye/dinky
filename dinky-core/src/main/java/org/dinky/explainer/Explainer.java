@@ -32,7 +32,6 @@ import org.dinky.executor.Executor;
 import org.dinky.explainer.mock.MockStatementExplainer;
 import org.dinky.function.data.model.UDF;
 import org.dinky.function.pool.UdfCodePool;
-import org.dinky.function.util.UDFUtil;
 import org.dinky.job.JobConfig;
 import org.dinky.job.JobManager;
 import org.dinky.job.JobRunnerFactory;
@@ -106,20 +105,6 @@ public class Explainer {
         for (String udfStatement : udfStatements) {
             jobStatementPlan.addJobStatement(udfStatement, JobStatementType.DDL, SqlType.CREATE);
         }
-    }
-
-    public List<UDF> parseUDFFromStatements(String[] statements) {
-        List<UDF> udfList = new ArrayList<>();
-        for (String statement : statements) {
-            if (statement.isEmpty()) {
-                continue;
-            }
-            UDF udf = UDFUtil.toUDF(statement, jobManager.getDinkyClassLoader());
-            if (Asserts.isNotNull(udf)) {
-                udfList.add(udf);
-            }
-        }
-        return udfList;
     }
 
     public ExplainResult explainSql(String statement) {

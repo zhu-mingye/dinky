@@ -108,7 +108,8 @@ public class JobStatementPlan {
                 throw new DinkyException("The statement cannot be empty. Please check your statements.");
             }
             if (jobStatement.getStatementType().equals(JobStatementType.SQL)
-                    || jobStatement.getStatementType().equals(JobStatementType.PIPELINE)) {
+                    || jobStatement.getStatementType().equals(JobStatementType.PIPELINE)
+                    || jobStatement.getStatementType().equals(JobStatementType.EXECUTE_JAR)) {
                 hasSqlStatement = true;
             }
         }

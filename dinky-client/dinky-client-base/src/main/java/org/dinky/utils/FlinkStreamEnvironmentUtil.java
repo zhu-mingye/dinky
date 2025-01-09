@@ -21,6 +21,8 @@ package org.dinky.utils;
 
 import static org.apache.flink.util.Preconditions.checkNotNull;
 
+import org.dinky.executor.CustomTableEnvironment;
+
 import org.apache.flink.api.common.Plan;
 import org.apache.flink.api.dag.Pipeline;
 import org.apache.flink.client.PlanTranslator;
@@ -66,6 +68,41 @@ public enum FlinkStreamEnvironmentUtil {
                 executorFactory.getExecutor(configuration).execute(pipeline, configuration, userClassloader);
 
         List<JobListener> jobListeners = env.getJobListeners();
+        try {
+            JobClient jobClient = jobClientFuture.get();
+            jobListeners.forEach(jobListener -> jobListener.onJobSubmitted(jobClient, null));
+            return jobClient;
+        } catch (ExecutionException executionException) {
+            final Throwable strippedException = ExceptionUtils.stripExecutionException(executionException);
+            jobListeners.forEach(jobListener -> jobListener.onJobSubmitted(null, strippedException));
+
+            throw new FlinkException(
+                    String.format("Failed to execute job '%s'.", ReflectUtil.invoke(pipeline, "getJobName")),
+                    strippedException);
+        }
+    }
+
+    public static JobClient executeAsync(Pipeline pipeline, CustomTableEnvironment env) throws Exception {
+        Configuration configuration = new Configuration(env.getRootConfiguration());
+        checkNotNull(pipeline, "pipeline cannot be null.");
+        checkNotNull(
+                configuration.get(DeploymentOptions.TARGET),
+                "No execution.target specified in your configuration file.");
+
+        PipelineExecutorServiceLoader executorServiceLoader = (PipelineExecutorServiceLoader)
+                ReflectUtil.getFieldValue(env.getStreamExecutionEnvironment(), "executorServiceLoader");
+        ClassLoader userClassloader = (ClassLoader) ReflectUtil.getFieldValue(env, "userClassloader");
+        final PipelineExecutorFactory executorFactory = executorServiceLoader.getExecutorFactory(configuration);
+
+        checkNotNull(
+                executorFactory,
+                "Cannot find compatible factory for specified execution.target (=%s)",
+                configuration.get(DeploymentOptions.TARGET));
+
+        CompletableFuture<JobClient> jobClientFuture =
+                executorFactory.getExecutor(configuration).execute(pipeline, configuration, userClassloader);
+
+        List<JobListener> jobListeners = env.getStreamExecutionEnvironment().getJobListeners();
         try {
             JobClient jobClient = jobClientFuture.get();
             jobListeners.forEach(jobListener -> jobListener.onJobSubmitted(jobClient, null));

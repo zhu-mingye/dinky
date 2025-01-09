@@ -81,7 +81,12 @@ import {
 import { l } from '@/utils/intl';
 import { editor } from 'monaco-editor';
 import { DataStudioActionType } from '@/pages/DataStudio/data.d';
-import { getDataByParams, handlePutDataJson, queryDataByParams } from '@/services/BusinessCrud';
+import {
+  getDataByParams,
+  handleOption,
+  handlePutDataJson,
+  queryDataByParams
+} from '@/services/BusinessCrud';
 import { API_CONSTANTS } from '@/services/endpoints';
 import { Jobs, LineageDetailInfo } from '@/types/DevOps/data';
 import { lockTask, matchLanguage } from '@/pages/DataStudio/function';
@@ -98,6 +103,12 @@ import { ResourceInfo } from '@/types/RegCenter/data';
 import { buildResourceTreeDataAtTreeForm } from '@/pages/RegCenter/Resource/components/FileTree/function';
 import { ProFormDependency } from '@ant-design/pro-form';
 import { SavePoint } from '@/pages/DataStudio/CenterTabContent/SqlTask/SavePoint';
+import {
+  DolphinTaskDefinition,
+  DolphinTaskGroupInfo,
+  DolphinTaskMinInfo
+} from '@/types/Studio/data';
+import PushDolphin from '@/pages/DataStudio/CenterTabContent/SqlTask/PushDolphin';
 
 export type FlinkSqlProps = {
   showDesc: boolean;
@@ -184,6 +195,35 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
   }));
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
+  const [pushDolphinState, setPushDolphinState] = useState<{
+    modalVisible: boolean;
+    buttonLoading: boolean;
+    confirmLoading: boolean;
+    dolphinTaskList: DolphinTaskMinInfo[];
+    dolphinTaskGroup: DolphinTaskGroupInfo[];
+    dolphinDefinitionTask: Partial<DolphinTaskDefinition>;
+    currentDinkyTaskValue: Partial<TaskState>;
+    formValuesInfo: any;
+  }>({
+    modalVisible: false,
+    buttonLoading: false,
+    confirmLoading: false,
+    dolphinTaskList: [],
+    dolphinTaskGroup: [],
+    dolphinDefinitionTask: {},
+    currentDinkyTaskValue: {},
+    formValuesInfo: {}
+  });
+
+  useEffect(() => {
+    if (sqlForm.enable) {
+      setSqlForm((prevState) => ({
+        ...prevState,
+        initSqlStatement: currentState.statement
+      }));
+    }
+  }, [sqlForm.enable, currentState.statement]);
+
   useAsyncEffect(async () => {
     const taskDetail = await getTaskDetails(params.taskId);
     if (taskDetail) {
@@ -197,6 +237,7 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
           statement: sqlConvertForm?.initSqlStatement ?? ''
         });
         setOriginStatementValue(sqlConvertForm?.initSqlStatement ?? '');
+        updateCenterTab({ ...props.tabData, params: newParams });
         if (params?.statement && params?.statement !== sqlConvertForm?.initSqlStatement) {
           setDiff([
             { key: 'statement', server: sqlConvertForm?.initSqlStatement, cache: params.statement }
@@ -430,6 +471,7 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
       }
     });
   }, [currentState, updateAction]);
+
   const handleDAG = useCallback(async () => {
     const statement =
       currentState.dialect.toLowerCase() === DIALECT.FLINKJAR
@@ -585,6 +627,7 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
   const handleFormat = useCallback(async () => {
     editorInstance.current?.getAction('format')?.run();
   }, [editorInstance.current]);
+
   const handleLocation = useCallback(async () => {
     const key = Number(id.replace('project_', ''));
     updateAction({
@@ -595,6 +638,7 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
       }
     });
   }, [updateAction]);
+
   const handleChangeJobLife = useCallback(async () => {
     if (JOB_LIFE_CYCLE.PUBLISH == currentState.step) {
       await changeTaskLife(
@@ -614,6 +658,70 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
     }
     setCurrentState((prevState) => ({ ...prevState, step: currentState.step }));
   }, [handleSave, currentState.step, currentState.taskId]);
+
+  const handlePushDolphinOpen = async () => {
+    const dinkyTaskId = currentState.taskId;
+    const dolphinTaskList: DolphinTaskMinInfo[] | undefined = await queryDataByParams<
+      DolphinTaskMinInfo[]
+    >(API_CONSTANTS.SCHEDULER_QUERY_UPSTREAM_TASKS, { dinkyTaskId });
+    const dolphinTaskDefinition: DolphinTaskDefinition | undefined =
+      await queryDataByParams<DolphinTaskDefinition>(
+        API_CONSTANTS.SCHEDULER_QUERY_TASK_DEFINITION,
+        {
+          dinkyTaskId
+        }
+      );
+
+    let dolphinTaskGroup: DolphinTaskGroupInfo[] | undefined = undefined;
+    if (dolphinTaskDefinition?.projectCode) {
+      dolphinTaskGroup = await queryDataByParams<DolphinTaskGroupInfo[]>(
+        API_CONSTANTS.SCHEDULER_QUERY_TASK_GROUP,
+        {
+          projectCode: dolphinTaskDefinition?.projectCode || undefined
+        }
+      );
+    }
+
+    const formValuesInfo = dolphinTaskDefinition
+      ? JSON.parse(JSON.stringify(dolphinTaskDefinition))
+      : {};
+
+    setPushDolphinState((prevState) => ({
+      ...prevState,
+      buttonLoading: true,
+      confirmLoading: false,
+      modalVisible: true,
+      dolphinTaskList: dolphinTaskList ?? [],
+      dolphinTaskGroup: dolphinTaskGroup ?? [],
+      dolphinDefinitionTask: dolphinTaskDefinition ?? {},
+      currentDinkyTaskValue: currentState as TaskState,
+      formValuesInfo: formValuesInfo ?? {}
+    }));
+  };
+
+  const handlePushDolphinCancel = async () => {
+    setPushDolphinState((prevState) => ({
+      ...prevState,
+      modalVisible: false,
+      buttonLoading: false,
+      dolphinTaskList: [],
+      dolphinTaskGroup: [],
+      confirmLoading: false,
+      dolphinDefinitionTask: {},
+      currentDinkyTaskValue: {},
+      formValuesInfo: {}
+    }));
+  };
+
+  const handlePushDolphinSubmit = async (value: DolphinTaskDefinition) => {
+    setPushDolphinState((prevState) => ({ ...prevState, loading: true }));
+    await handleOption(
+      API_CONSTANTS.SCHEDULER_CREATE_OR_UPDATE_TASK_DEFINITION,
+      `推送任务[${currentState.name}]至 DolphinScheduler`,
+      value
+    );
+    await handlePushDolphinCancel();
+  };
 
   return (
     <Skeleton
@@ -874,6 +982,7 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
                 hotKeyDesc: 'Ctrl+E',
                 hotKeyHandle: (e: KeyboardEvent) => e.ctrlKey && e.key === 'E'
               }}
+              onClick={handlePushDolphinOpen}
             />
           </Flex>
         </ProForm>
@@ -1040,6 +1149,20 @@ export const SqlTask = memo((props: FlinkSqlProps & any) => {
           </Row>
         </Flex>
       </Flex>
+
+      {pushDolphinState.modalVisible && (
+        <PushDolphin
+          onCancel={() => handlePushDolphinCancel()}
+          currentDinkyTaskValue={pushDolphinState.currentDinkyTaskValue}
+          modalVisible={pushDolphinState.modalVisible}
+          loading={pushDolphinState.confirmLoading}
+          dolphinDefinitionTask={pushDolphinState.dolphinDefinitionTask}
+          dolphinTaskList={pushDolphinState.dolphinTaskList}
+          dolphinTaskGroup={pushDolphinState.dolphinTaskGroup}
+          onSubmit={(values) => handlePushDolphinSubmit(values)}
+          formValuesInfo={pushDolphinState.formValuesInfo}
+        />
+      )}
     </Skeleton>
   );
 });

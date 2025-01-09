@@ -61,7 +61,6 @@ const BaseConfigItem = (prop: WelcomeProps) => {
         </Button>
         <Link onClick={prop.onPrev}> {l('welcome.prev')}</Link>
       </div>
-      <WelcomePic1 size={500} />
     </Flex>
   );
 };
