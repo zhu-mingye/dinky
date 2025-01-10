@@ -19,10 +19,8 @@
 
 package org.dinky.aop;
 
-import org.dinky.data.annotations.CheckTaskOwner;
-import org.dinky.data.constant.BaseConstant;
+import org.dinky.data.annotations.CheckTaskApproval;
 import org.dinky.data.enums.Status;
-import org.dinky.data.enums.TaskOwnerLockStrategyEnum;
 import org.dinky.data.exception.BusException;
 import org.dinky.data.model.SystemConfiguration;
 import org.dinky.utils.AspectUtil;
@@ -38,39 +36,35 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Aspect
 @Slf4j
 @Component
-public class TaskOperationPermissionAspect {
-
+public class TaskApprovalAspect {
     @Resource
     private ApplicationContext applicationContext;
 
     /**
      * Check whether the user has the permission to perform the task.
      *
-     * @param joinPoint
-     * @param checkTaskOwner
-     * @return
-     * @throws Throwable
+     * @param joinPoint task operation
+     * @param checkTaskApproval check task approval aspect
+     * @return join point execute result
+     * @throws Throwable exception if task still need approval
      */
-    @Around(value = "@annotation(checkTaskOwner)")
-    public Object processAround(ProceedingJoinPoint joinPoint, CheckTaskOwner checkTaskOwner) throws Throwable {
-        if (!TaskOwnerLockStrategyEnum.ALL.equals(
-                        SystemConfiguration.getInstances().GetTaskOwnerLockStrategyValue())
-                && BaseConstant.ADMIN_ID != StpUtil.getLoginIdAsInt()) {
-            Class checkParam = checkTaskOwner.checkParam();
+    @Around(value = "@annotation(checkTaskApproval)")
+    public Object processAround(ProceedingJoinPoint joinPoint, CheckTaskApproval checkTaskApproval) throws Throwable {
+        if (SystemConfiguration.getInstances().enableTaskSubmitApprove()) {
+            Class checkParam = checkTaskApproval.checkParam();
             Object param = AspectUtil.getParam(joinPoint, checkParam);
             if (Objects.nonNull(param)) {
-                Object bean = applicationContext.getBean(checkTaskOwner.checkInterface());
+                Object bean = applicationContext.getBean(checkTaskApproval.checkInterface());
                 Class<?> clazz = bean.getClass();
-                Method method = clazz.getMethod(checkTaskOwner.checkMethod(), param.getClass());
+                Method method = clazz.getMethod(checkTaskApproval.checkMethod(), param.getClass());
                 Object invoke = method.invoke(bean, param);
-                if (invoke != null && !(Boolean) invoke) {
-                    throw new BusException(Status.TASK_NOT_OPERATE_PERMISSION);
+                if (invoke != null && (Boolean) invoke) {
+                    throw new BusException(Status.SYS_APPROVAL_TASK_NOT_APPROVED);
                 }
             }
         }
