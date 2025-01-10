@@ -31,9 +31,11 @@ import org.dinky.gateway.result.SavePointResult;
 import org.dinky.gateway.result.TestResult;
 import org.dinky.utils.TextUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.configuration.ConfigOption;
 import org.apache.flink.configuration.CoreOptions;
 import org.apache.flink.configuration.DeploymentOptions;
+import org.apache.flink.configuration.DeploymentOptionsInternal;
 import org.apache.flink.configuration.GlobalConfiguration;
 import org.apache.flink.configuration.PipelineOptions;
 import org.apache.flink.kubernetes.KubernetesClusterClientFactory;
@@ -49,11 +51,11 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import alluxio.shaded.client.org.apache.commons.lang3.StringUtils;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.text.StrFormatter;
 import cn.hutool.core.util.ReflectUtil;
+import cn.hutool.core.util.StrUtil;
 import io.fabric8.kubernetes.api.model.Pod;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -86,6 +88,12 @@ public abstract class KubernetesGateway extends AbstractGateway {
 
     protected void initConfig() {
         flinkConfigPath = config.getClusterConfig().getFlinkConfigPath();
+
+        // The user-defined flink conf path overrides the flink conf path parameter.
+        if (StringUtils.isNotBlank(flinkConfigPath)) {
+            addConfigParas(DeploymentOptionsInternal.CONF_DIR, flinkConfigPath);
+        }
+
         flinkConfig = config.getFlinkConfig();
         String jobName = flinkConfig.getJobName();
         if (TextUtil.isEmpty(jobName)) {
@@ -150,7 +158,7 @@ public abstract class KubernetesGateway extends AbstractGateway {
     boolean isValidTaskName(String jobName) {
         String JOB_NAME_PATTERN = "^[a-z0-9][a-z0-9.-]*[a-z0-9]$";
         Pattern pattern = Pattern.compile(JOB_NAME_PATTERN);
-        if (StringUtils.isBlank(jobName)) {
+        if (StrUtil.isBlank(jobName)) {
             return false;
         }
         Matcher matcher = pattern.matcher(jobName);
@@ -222,9 +230,9 @@ public abstract class KubernetesGateway extends AbstractGateway {
             }
             return TestResult.success();
         } catch (Exception e) {
-            logger.error(Status.GAETWAY_KUBERNETS_TEST_FAILED.getMessage(), e);
+            logger.error(Status.GATEWAY_KUBERNETES_TEST_FAILED.getMessage(), e);
             return TestResult.fail(
-                    StrFormatter.format("{}:{}", Status.GAETWAY_KUBERNETS_TEST_FAILED.getMessage(), e.getMessage()));
+                    StrFormatter.format("{}:{}", Status.GATEWAY_KUBERNETES_TEST_FAILED.getMessage(), e.getMessage()));
         } finally {
             close();
         }
