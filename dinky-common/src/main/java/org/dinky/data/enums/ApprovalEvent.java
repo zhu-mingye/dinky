@@ -17,19 +17,22 @@
  *
  */
 
-export enum SettingConfigKeyEnum {
-  DINKY = 'Dinky',
-  FLINK = 'Flink',
-  MAVEN = 'Maven',
-  DOLPHIN_SCHEDULER = 'DolphinScheduler',
-  LDAP = 'LDAP',
-  METRIC = 'Metric',
-  RESOURCE = 'Resource',
-  ENV = 'Env',
-  APPROVAL = 'Approval'
-}
+package org.dinky.data.enums;
 
-export enum ButtonFrontendType {
-  BOOLEAN = 'boolean',
-  OPTION = 'option'
+public enum ApprovalEvent {
+    UNKNOWN("UNKNOWN"),
+    SUBMIT("SUBMIT"),
+    APPROVE("APPROVE"),
+    REJECT("REJECT"),
+    WITHDRAW("WITHDRAW"),
+    CANCEL("CANCEL");
+    private final String value;
+
+    ApprovalEvent(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

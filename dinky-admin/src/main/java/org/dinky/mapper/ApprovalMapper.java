@@ -17,19 +17,16 @@
  *
  */
 
-export enum SettingConfigKeyEnum {
-  DINKY = 'Dinky',
-  FLINK = 'Flink',
-  MAVEN = 'Maven',
-  DOLPHIN_SCHEDULER = 'DolphinScheduler',
-  LDAP = 'LDAP',
-  METRIC = 'Metric',
-  RESOURCE = 'Resource',
-  ENV = 'Env',
-  APPROVAL = 'Approval'
-}
+package org.dinky.mapper;
 
-export enum ButtonFrontendType {
-  BOOLEAN = 'boolean',
-  OPTION = 'option'
+import org.dinky.data.model.Approval;
+import org.dinky.mybatis.mapper.SuperMapper;
+
+import java.util.List;
+
+import org.mapstruct.Mapper;
+
+@Mapper
+public interface ApprovalMapper extends SuperMapper<Approval> {
+    List<Approval> getApprovalByTaskId(Integer taskId);
 }
